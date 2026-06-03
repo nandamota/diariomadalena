@@ -179,6 +179,7 @@
   .rec-btn{flex:1;border:none;border-radius:14px;padding:13px 10px;font-weight:700;font-size:13.5px;cursor:pointer;font-family:'Nunito Sans';display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;line-height:1.2}
   .rec-start{background:var(--sage);color:#fff}
   .rec-transcribe{background:var(--terra);color:#fff}
+  .tidy-btn{margin-top:8px;background:none;border:1px solid var(--line);color:var(--rose-deep);font-weight:700;font-size:13px;padding:9px 14px;border-radius:12px;cursor:pointer;font-family:'Nunito Sans';width:100%}
   .rec-stop{background:var(--rose-deep);color:#fff;animation:pulse 1.2s infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
   .rec-note{font-size:12px;color:var(--ink-soft);margin-top:8px;line-height:1.4}
@@ -300,6 +301,7 @@
 
     <label>Texto / transcrição <span style="font-weight:400">(pode editar)</span></label>
     <textarea id="fText" placeholder="Escreva aqui ou deixe a gravação preencher..."></textarea>
+    <button type="button" class="tidy-btn" onclick="tidyField()">✨ Organizar texto (pontuação e maiúsculas)</button>
 
     <label>Fotos e vídeos</label>
     <input type="file" id="fMedia" accept="image/*,video/*" multiple style="font-size:13px">
@@ -395,6 +397,7 @@ let ageUnit='dias';
 let pendingMedia=[]; // {type,blob}
 let pendingAudio=null;
 let recognition=null, mediaRec=null, audioChunks=[], recording=false;
+let transcriptActive=false, finalTranscript='';
 let babyName='minha filha', birth=null;
 
 /* ---------- Utils ---------- */
@@ -833,15 +836,17 @@ async function startRec(withTranscription){
       document.getElementById('audioPreview').innerHTML=`<audio controls src="${blobURL(pendingAudio)}" style="width:100%;margin-top:8px"></audio>`;
       stream.getTracks().forEach(t=>t.stop());};
     mediaRec.start();
+    transcriptActive=withTranscription;
     if(withTranscription){
       const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-      if(SR){recognition=new SR();recognition.lang='pt-BR';recognition.continuous=true;recognition.interimResults=true;
-        let finalText=document.getElementById('fText').value;
-        recognition.onresult=ev=>{let interim='';for(let i=ev.resultIndex;i<ev.results.length;i++){const t=ev.results[i][0].transcript;if(ev.results[i].isFinal)finalText+=t+' ';else interim+=t;}document.getElementById('fText').value=(finalText+interim).trim();};
-        recognition.onerror=()=>{};recognition.start();
-      }else{document.getElementById('recNote').innerHTML='⚠️ Este navegador não transcreve automático. O áudio será salvo e você pode digitar o texto. Use o <b>Chrome</b> (PC ou Android) para transcrição automática.'}
+      if(SR){
+        finalTranscript=document.getElementById('fText').value?document.getElementById('fText').value+' ':'';
+        startRecognition(SR);
+        document.getElementById('recNote').innerHTML='🔴 <b>Ouvindo...</b> fale normalmente. O texto aparece abaixo enquanto você fala.';
+      }else{
+        document.getElementById('recNote').innerHTML='⚠️ Este navegador não transcreve. O áudio será salvo e você pode digitar o texto. Use o <b>Chrome</b> (PC ou Android).';
+      }
     }
-    // mostra só o botão ativo em modo "parar"
     const active=withTranscription?document.getElementById('recBtnTrans'):document.getElementById('recBtnPlain');
     const other=withTranscription?document.getElementById('recBtnPlain'):document.getElementById('recBtnTrans');
     active.className='rec-btn rec-stop';active.textContent='⏹️ Parar gravação';
@@ -857,10 +862,64 @@ async function startRec(withTranscription){
     resetRecBtn();
   }
 }
+function startRecognition(SR){
+  recognition=new SR();
+  recognition.lang='pt-BR';
+  recognition.continuous=true;
+  recognition.interimResults=true;
+  recognition.onresult=ev=>{
+    let interim='';
+    for(let i=ev.resultIndex;i<ev.results.length;i++){
+      const t=ev.results[i][0].transcript;
+      if(ev.results[i].isFinal)finalTranscript+=t+' ';
+      else interim+=t;
+    }
+    document.getElementById('fText').value=(finalTranscript+interim).trim();
+  };
+  recognition.onerror=ev=>{
+    if(ev.error==='not-allowed'||ev.error==='service-not-allowed'){
+      document.getElementById('recNote').innerHTML='⚠️ Microfone bloqueado para transcrição. Toque no 🔒 e permita o microfone.';
+      transcriptActive=false;
+    }
+  };
+  // AUTO-RESTART: no Android o reconhecimento para sozinho; reinicia enquanto estiver gravando
+  recognition.onend=()=>{
+    if(transcriptActive&&recording){
+      try{recognition.start()}catch(e){setTimeout(()=>{if(transcriptActive&&recording)try{recognition.start()}catch(_){}}, 300)}
+    }
+  };
+  try{recognition.start()}catch(e){}
+}
 function stopRec(silent){
+  transcriptActive=false;
   if(mediaRec&&mediaRec.state!=='inactive')mediaRec.stop();
-  if(recognition){try{recognition.stop()}catch(e){}recognition=null}
+  if(recognition){try{recognition.onend=null;recognition.stop()}catch(e){}recognition=null}
+  // ao parar, deixa o texto coeso
+  if(!silent){
+    const ft=document.getElementById('fText');
+    if(ft&&ft.value.trim())ft.value=tidyText(ft.value);
+  }
   resetRecBtn();
+}
+
+/* ---------- Deixar o texto coeso ---------- */
+function tidyText(raw){
+  let t=raw.replace(/\s+/g,' ').trim();
+  if(!t)return t;
+  t=t.replace(/\s+([,.;:!?])/g,'$1').replace(/([,.;:!?])(?=[^\s])/g,'$1 ');
+  // capitaliza início e após . ! ?
+  t=t.replace(/(^\s*[a-záàâãéêíóôõúç])|([.!?]\s+[a-záàâãéêíóôõúç])/g,m=>m.toUpperCase());
+  // primeira letra maiúscula
+  t=t.charAt(0).toUpperCase()+t.slice(1);
+  // ponto final se não houver pontuação no fim
+  if(!/[.!?…]$/.test(t))t+='.';
+  return t;
+}
+function tidyField(){
+  const ft=document.getElementById('fText');
+  if(!ft||!ft.value.trim()){toast('Nada para organizar ainda');return}
+  ft.value=tidyText(ft.value);
+  toast('Texto organizado ✨');
 }
 
 /* ---------- Save ---------- */
