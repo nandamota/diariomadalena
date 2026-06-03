@@ -2,743 +2,1052 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trintena de São José</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 95 Q50 60 50 40' stroke='%234a7c3f' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3Cpath d='M50 70 Q35 65 28 52 Q40 55 50 65' fill='%234a7c3f'/%3E%3Cpath d='M50 70 Q65 65 72 52 Q60 55 50 65' fill='%234a7c3f'/%3E%3Cellipse cx='50' cy='18' rx='7' ry='14' fill='%23f5f0e0'/%3E%3Cellipse cx='50' cy='18' rx='7' ry='14' fill='%23f5f0e0' transform='rotate(-40 50 18)'/%3E%3Cellipse cx='50' cy='18' rx='7' ry='14' fill='%23f5f0e0' transform='rotate(40 50 18)'/%3E%3Ccircle cx='50' cy='14' r='3' fill='%23d4a843'/%3E%3Ccircle cx='41' cy='20' r='2.5' fill='%23d4a843'/%3E%3Ccircle cx='59' cy='20' r='2.5' fill='%23d4a843'/%3E%3C/svg%3E">
-<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cinzel:wght@400;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Diário da Minha Filha</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='18' y='14' width='64' height='74' rx='9' fill='%23d98b8b'/%3E%3Crect x='26' y='14' width='56' height='74' rx='8' fill='%23fffdfb'/%3E%3Cline x1='18' y1='32' x2='26' y2='32' stroke='%23c06b6b' stroke-width='4' stroke-linecap='round'/%3E%3Cline x1='18' y1='46' x2='26' y2='46' stroke='%23e8a87c' stroke-width='4' stroke-linecap='round'/%3E%3Cline x1='18' y1='60' x2='26' y2='60' stroke='%239bab8a' stroke-width='4' stroke-linecap='round'/%3E%3Ccircle cx='54' cy='46' r='15' fill='%23f5e6d8'/%3E%3Ccircle cx='49' cy='44' r='2.2' fill='%233a2e29'/%3E%3Ccircle cx='59' cy='44' r='2.2' fill='%233a2e29'/%3E%3Cpath d='M49 51 q5 4 10 0' stroke='%23c06b6b' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='44' cy='49' r='2.5' fill='%23e8a87c' opacity='.5'/%3E%3Ccircle cx='64' cy='49' r='2.5' fill='%23e8a87c' opacity='.5'/%3E%3Cpath d='M54 31 q-3 -6 -8 -3 q4 -1 8 3z' fill='%239bab8a'/%3E%3C/svg%3E">
 <style>
-  :root {
-    --cream: #f7f1e8;
-    --parchment: #ede3d0;
-    --gold: #b8862a;
-    --gold-light: #d4a843;
-    --gold-pale: #f0d896;
-    --brown-deep: #3a2410;
-    --brown-mid: #6b3e1e;
-    --brown-light: #8b5e3c;
-    --red-dark: #8b1a1a;
-    --text-main: #2c1a0e;
-    --text-muted: #6b4e35;
-  }
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Nunito+Sans:wght@400;500;600;700&display=swap');
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root{
+    --bg:#fdf6f0;
+    --bg-card:#fffdfb;
+    --ink:#3a2e29;
+    --ink-soft:#7a6a62;
+    --rose:#d98b8b;
+    --rose-deep:#c06b6b;
+    --terra:#e8a87c;
+    --sage:#9bab8a;
+    --cream:#f5e6d8;
+    --line:#ecdfd4;
+    --shadow:0 4px 24px rgba(160,110,90,.10);
+    --shadow-lg:0 10px 40px rgba(160,110,90,.16);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{background:var(--bg);color:var(--ink);font-family:'Nunito Sans',sans-serif}
+  body{
+    background-image:radial-gradient(circle at 12% 18%, rgba(217,139,139,.06), transparent 40%),
+                     radial-gradient(circle at 88% 78%, rgba(232,168,124,.07), transparent 42%);
+    min-height:100vh;padding-bottom:96px;
+  }
+  h1,h2,h3,.display{font-family:'Fraunces',serif}
 
-  body {
-    background-color: var(--cream);
-    background-image:
-      radial-gradient(ellipse at 20% 10%, rgba(184,134,42,0.08) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 90%, rgba(139,30,30,0.06) 0%, transparent 50%),
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.025'/%3E%3C/svg%3E");
-    color: var(--text-main);
-    font-family: 'Crimson Text', Georgia, serif;
-    min-height: 100vh;
-    padding: 0 0 60px;
+  /* HEADER */
+  header{
+    padding:30px 22px 22px;text-align:center;position:relative;overflow:hidden;
+    background:linear-gradient(160deg, #fbeae0 0%, #fdf6f0 100%);
+    border-bottom:1px solid var(--line);
   }
+  header .leaf{position:absolute;font-size:90px;opacity:.07;pointer-events:none}
+  header .l1{top:-14px;left:-8px;transform:rotate(-18deg)}
+  header .l2{bottom:-30px;right:-6px;transform:rotate(24deg)}
+  header h1{font-size:30px;font-weight:600;letter-spacing:-.5px;line-height:1.1}
+  header h1 .accent{color:var(--rose-deep);font-style:italic}
+  header .sub{color:var(--ink-soft);font-size:14px;margin-top:6px}
+  .gear{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.6);border:1px solid var(--line);border-radius:50%;width:38px;height:38px;font-size:17px;cursor:pointer;z-index:5;transition:.2s}
+  .gear:active{transform:rotate(40deg)}
+  .backup-main{margin-top:16px;background:var(--rose-deep);color:#fff;border:none;border-radius:999px;padding:12px 26px;font-size:14.5px;font-weight:700;font-family:'Nunito Sans';cursor:pointer;box-shadow:var(--shadow);transition:transform .15s}
+  .backup-main:active{transform:scale(.96)}
+  .settings-panel{display:none;max-width:380px;margin:16px auto 0;background:var(--bg-card);border:1px solid var(--line);border-radius:18px;padding:12px;box-shadow:var(--shadow-lg);text-align:left}
+  .settings-panel.show{display:block;animation:rise .3s ease both}
+  .set-item{display:block;width:100%;text-align:left;background:none;border:none;padding:11px 10px;font-size:14px;color:var(--ink);font-family:'Nunito Sans';font-weight:600;cursor:pointer;border-radius:10px}
+  .set-item:active{background:var(--cream)}
+  .set-divider{height:1px;background:var(--line);margin:6px 0}
+  .set-save{background:var(--rose-deep);color:#fff;border:none;border-radius:12px;padding:10px 20px;font-weight:700;font-size:14px;font-family:'Nunito Sans';cursor:pointer;width:100%}
+  .set-label{font-size:12px;font-weight:700;color:var(--ink-soft);padding:6px 10px 8px;text-transform:uppercase;letter-spacing:.4px}
+  .theme-swatches{display:flex;flex-wrap:wrap;gap:10px;padding:4px 10px 8px}
+  .swatch{width:50px;cursor:pointer;text-align:center}
+  .swatch .dots{display:flex;border-radius:10px;overflow:hidden;height:30px;border:2px solid transparent;transition:.2s}
+  .swatch.active .dots{border-color:var(--ink)}
+  .swatch .dots span{flex:1}
+  .swatch .nm{font-size:9.5px;font-weight:700;color:var(--ink-soft);margin-top:3px;display:block}
+  .age-hero{
+    display:inline-block;margin:10px auto 2px;font-family:'Fraunces';font-weight:600;
+    font-size:16px;color:#fff;background:linear-gradient(135deg,var(--rose-deep),var(--terra));
+    padding:7px 18px;border-radius:999px;box-shadow:var(--shadow);
+  }
+  .age-hero::before{content:'🎀 '}
+  .age-clock{
+    display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;
+    margin:14px auto 2px;
+  }
+  .age-clock .party{font-size:22px;line-height:1}
+  .age-clock .units{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}
+  .age-unit{
+    background:linear-gradient(135deg,var(--rose-deep),var(--terra));color:#fff;
+    border-radius:14px;padding:6px 11px;min-width:46px;text-align:center;box-shadow:var(--shadow);
+    animation:rise .4s ease both;
+  }
+  .age-unit .v{font-family:'Fraunces';font-size:21px;font-weight:700;line-height:1}
+  .age-unit .u{font-size:10px;font-weight:700;opacity:.85;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+  .editname{background:none;border:none;color:var(--ink-soft);font-size:12px;text-decoration:underline;margin-top:8px;cursor:pointer}
+  .iobtn{border:1px solid var(--line);background:var(--bg-card);color:var(--rose-deep);font-size:12.5px;font-weight:700;padding:8px 14px;border-radius:999px;cursor:pointer;font-family:'Nunito Sans'}
 
-  /* ── HEADER ── */
-  header {
-    background: var(--brown-deep);
-    background-image: linear-gradient(160deg, #4a2e14 0%, #2a1608 60%, #1a0d04 100%);
-    padding: 48px 24px 40px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
+  /* TABS */
+  nav.tabs{
+    display:flex;gap:6px;padding:14px 14px 4px;overflow-x:auto;
+    position:sticky;top:0;z-index:40;background:var(--bg);
+    border-bottom:1px solid var(--line);scrollbar-width:none;
   }
-  header::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 40px,
-      rgba(184,134,42,0.04) 40px,
-      rgba(184,134,42,0.04) 41px
-    );
+  nav.tabs::-webkit-scrollbar{display:none}
+  nav.tabs button{
+    flex:0 0 auto;border:1px solid var(--line);background:var(--bg-card);
+    color:var(--ink-soft);padding:9px 15px;border-radius:999px;font-size:13.5px;
+    font-weight:600;font-family:'Nunito Sans';cursor:pointer;transition:.2s;
   }
-  header::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, var(--gold), var(--gold-light), var(--gold), transparent);
-  }
+  nav.tabs button.active{background:var(--rose-deep);color:#fff;border-color:var(--rose-deep);box-shadow:var(--shadow)}
 
-  .cross-icon {
-    font-size: 28px;
-    color: var(--gold-pale);
-    letter-spacing: 12px;
-    margin-bottom: 16px;
-    display: block;
-    opacity: 0.85;
-  }
+  .wrap{max-width:680px;margin:0 auto;padding:18px 16px}
+  .section-title{font-size:21px;font-weight:600;margin-bottom:4px}
+  .section-sub{color:var(--ink-soft);font-size:13.5px;margin-bottom:16px}
 
-  header h1 {
-    font-family: 'Cinzel', serif;
-    font-weight: 600;
-    font-size: clamp(22px, 5vw, 36px);
-    color: var(--gold-pale);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    line-height: 1.2;
+  /* ENTRY CARD */
+  .entry{
+    background:var(--bg-card);border:1px solid var(--line);border-radius:20px;
+    padding:18px;margin-bottom:16px;box-shadow:var(--shadow);
+    animation:rise .4s ease both;
   }
-  header h1 span {
-    display: block;
-    font-size: 0.55em;
-    letter-spacing: 6px;
-    color: var(--gold-light);
-    margin-top: 6px;
-    font-weight: 400;
-    font-family: 'IM Fell English', serif;
-    font-style: italic;
+  @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  .entry .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px}
+  .entry .date{font-family:'Fraunces';font-size:17px;font-weight:600}
+  .entry .meta{font-size:12px;color:var(--ink-soft);margin-top:2px}
+  .entry .theme-tag{
+    display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;
+    padding:4px 10px;border-radius:999px;background:var(--cream);color:var(--ink);
   }
+  .entry .text{font-size:15px;line-height:1.6;margin:10px 0;white-space:pre-wrap;word-break:break-word}
+  .entry-title{font-family:'Fraunces';font-size:17px;font-weight:600;color:var(--rose-deep);margin:8px 0 2px;line-height:1.25}
+  .entry audio{width:100%;margin-top:8px}
+  .entry .transcript{
+    background:#faf3ec;border-left:3px solid var(--terra);border-radius:0 10px 10px 0;
+    padding:10px 12px;margin-top:10px;font-size:14px;line-height:1.55;color:var(--ink-soft);font-style:italic;
+  }
+  .media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-top:10px}
+  .media-grid img,.media-grid video{width:100%;height:90px;object-fit:cover;border-radius:12px;cursor:pointer;background:#eee}
+  .entry .del{background:none;border:none;color:var(--rose-deep);font-size:12px;cursor:pointer;opacity:.7;margin-top:10px}
+  .scope-badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;color:#fff}
+  .scope-dia{background:var(--sage)}
+  .scope-semana{background:var(--terra)}
 
-  /* ── DIAS TRACKER ── */
-  .tracker-section {
-    max-width: 680px;
-    margin: 36px auto 0;
-    padding: 0 20px;
-  }
+  .empty{text-align:center;color:var(--ink-soft);padding:50px 20px;font-size:14.5px}
+  .empty .big{font-size:46px;display:block;margin-bottom:10px;opacity:.5}
 
-  .tracker-title {
-    font-family: 'Cinzel', serif;
-    font-size: 13px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--brown-mid);
-    text-align: center;
-    margin-bottom: 20px;
+  /* WEEK / TIMELINE GROUPS */
+  .group-head{
+    font-family:'Fraunces';font-size:16px;font-weight:600;color:var(--rose-deep);
+    margin:22px 0 10px;padding-bottom:6px;border-bottom:1px dashed var(--line);
   }
+  .timeline .entry{position:relative;margin-left:18px}
+  .timeline .entry::before{content:'';position:absolute;left:-18px;top:24px;width:10px;height:10px;border-radius:50%;background:var(--rose);box-shadow:0 0 0 4px var(--bg)}
+  .timeline{border-left:2px solid var(--line);padding-left:4px;margin-left:6px}
 
-  .dias-grid {
-    display: grid;
-    grid-template-columns: repeat(10, 1fr);
-    gap: 8px;
+  /* FAB */
+  .fab{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:var(--rose-deep);color:#fff;border:none;border-radius:999px;
+    padding:15px 26px;font-size:15px;font-weight:700;font-family:'Nunito Sans';
+    box-shadow:var(--shadow-lg);cursor:pointer;z-index:50;display:flex;align-items:center;gap:8px;
+    transition:transform .15s;
   }
+  .fab:active{transform:translateX(-50%) scale(.95)}
 
-  @media (max-width: 480px) {
-    .dias-grid { grid-template-columns: repeat(6, 1fr); gap: 6px; }
+  /* MODAL */
+  .overlay{position:fixed;inset:0;background:rgba(58,46,41,.45);backdrop-filter:blur(3px);z-index:60;display:none;align-items:flex-end;justify-content:center}
+  .overlay.show{display:flex;animation:fade .2s}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .sheet{
+    background:var(--bg);width:100%;max-width:680px;max-height:92vh;overflow-y:auto;
+    border-radius:26px 26px 0 0;padding:22px 18px 30px;animation:slideup .3s ease;
   }
+  @keyframes slideup{from{transform:translateY(100%)}to{transform:none}}
+  .sheet h2{font-size:22px;font-weight:600;margin-bottom:16px;text-align:center}
+  .sheet .grab{width:42px;height:5px;background:var(--line);border-radius:9px;margin:0 auto 16px}
+  label{display:block;font-size:13px;font-weight:700;color:var(--ink-soft);margin:14px 0 6px}
+  input[type=text],input[type=date],textarea,select{
+    width:100%;border:1px solid var(--line);background:var(--bg-card);border-radius:14px;
+    padding:12px 14px;font-size:15px;font-family:'Nunito Sans';color:var(--ink);
+  }
+  textarea{min-height:90px;resize:vertical;line-height:1.5}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--rose)}
+  .seg{display:flex;gap:8px}
+  .seg button{flex:1;border:1px solid var(--line);background:var(--bg-card);padding:11px;border-radius:14px;font-weight:700;font-size:14px;color:var(--ink-soft);cursor:pointer}
+  .seg button.on{background:var(--rose-deep);color:#fff;border-color:var(--rose-deep)}
+  .theme-pick{display:flex;flex-wrap:wrap;gap:7px}
+  .theme-pick button{border:1px solid var(--line);background:var(--bg-card);padding:8px 13px;border-radius:999px;font-size:13px;font-weight:600;color:var(--ink-soft);cursor:pointer;display:flex;align-items:center;gap:5px}
+  .theme-pick button.on{background:var(--cream);color:var(--ink);border-color:var(--terra)}
 
-  .dia-btn {
-    aspect-ratio: 1;
-    border: 1.5px solid var(--gold);
-    background: transparent;
-    border-radius: 4px;
-    cursor: pointer;
-    font-family: 'Cinzel', serif;
-    font-size: 12px;
-    color: var(--brown-mid);
-    transition: all 0.25s ease;
-    position: relative;
-    overflow: hidden;
-  }
-  .dia-btn:hover {
-    background: rgba(184,134,42,0.12);
-    border-color: var(--gold-light);
-    color: var(--brown-deep);
-  }
-  .dia-btn.rezado {
-    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
-    border-color: var(--gold);
-    color: var(--brown-deep);
-    font-weight: 600;
-  }
-  .dia-btn.rezado::after {
-    content: '✓';
-    position: absolute;
-    top: 1px; right: 3px;
-    font-size: 8px;
-    color: var(--brown-deep);
-    opacity: 0.7;
-  }
+  .rec-row{display:flex;gap:10px;align-items:center;margin-top:6px}
+  .rec-btn{flex:1;border:none;border-radius:14px;padding:13px 10px;font-weight:700;font-size:13.5px;cursor:pointer;font-family:'Nunito Sans';display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;line-height:1.2}
+  .rec-start{background:var(--sage);color:#fff}
+  .rec-transcribe{background:var(--terra);color:#fff}
+  .rec-stop{background:var(--rose-deep);color:#fff;animation:pulse 1.2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+  .rec-note{font-size:12px;color:var(--ink-soft);margin-top:8px;line-height:1.4}
+  .filepreview{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .filepreview .chip{position:relative}
+  .filepreview img,.filepreview video{width:64px;height:64px;object-fit:cover;border-radius:10px}
+  .filepreview .x{position:absolute;top:-6px;right:-6px;background:var(--rose-deep);color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:12px;cursor:pointer;line-height:1}
+  .savebar{display:flex;gap:10px;margin-top:24px}
+  .savebar button{flex:1;border:none;border-radius:14px;padding:14px;font-weight:700;font-size:15px;cursor:pointer;font-family:'Nunito Sans'}
+  .save{background:var(--rose-deep);color:#fff}
+  .cancel{background:var(--cream);color:var(--ink)}
 
-  .progresso-bar-wrap {
-    margin-top: 16px;
-    background: rgba(184,134,42,0.15);
-    border-radius: 20px;
-    height: 6px;
-    overflow: hidden;
-  }
-  .progresso-bar {
-    height: 100%;
-    background: linear-gradient(90deg, var(--gold), var(--gold-light));
-    border-radius: 20px;
-    transition: width 0.5s ease;
-  }
-  .progresso-texto {
-    text-align: center;
-    font-family: 'Crimson Text', serif;
-    font-size: 14px;
-    color: var(--text-muted);
-    margin-top: 10px;
-    font-style: italic;
-  }
+  /* lightbox */
+  .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:90;display:none;align-items:center;justify-content:center;padding:18px}
+  .lightbox.show{display:flex}
+  .lightbox img,.lightbox video{max-width:100%;max-height:90vh;border-radius:12px}
+  .lightbox .close{position:absolute;top:18px;right:20px;color:#fff;font-size:34px;background:none;border:none;cursor:pointer}
 
-  /* ── DIVISÓRIA ── */
-  .divider {
-    max-width: 680px;
-    margin: 36px auto;
-    padding: 0 20px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    color: var(--gold);
-    opacity: 0.6;
-  }
-  .divider::before, .divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold));
-  }
-  .divider::after { background: linear-gradient(270deg, transparent, var(--gold)); }
-  .divider span { font-size: 18px; }
+  .stat-row{display:flex;gap:10px;margin-bottom:18px}
+  .stat{flex:1;background:var(--bg-card);border:1px solid var(--line);border-radius:16px;padding:14px;text-align:center;box-shadow:var(--shadow)}
+  .stat .n{font-family:'Fraunces';font-size:26px;font-weight:600;color:var(--rose-deep)}
+  .stat .l{font-size:11.5px;color:var(--ink-soft);margin-top:2px}
+  .toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 20px;border-radius:999px;font-size:13.5px;z-index:100;opacity:0;transition:.3s;pointer-events:none}
+  .toast.show{opacity:1}
 
-  /* ── ORAÇÃO ── */
-  .oracao-container {
-    max-width: 680px;
-    margin: 0 auto;
-    padding: 0 24px;
-  }
-
-  .intro-block {
-    background: linear-gradient(135deg, rgba(184,134,42,0.08), rgba(139,30,30,0.04));
-    border-left: 3px solid var(--gold);
-    border-radius: 0 8px 8px 0;
-    padding: 24px 24px 24px 20px;
-    margin-bottom: 32px;
-    font-size: 18px;
-    line-height: 1.8;
-    color: var(--text-main);
-  }
-
-  .invocacao {
-    font-family: 'Cinzel', serif;
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--brown-mid);
-    text-align: center;
-    letter-spacing: 1px;
-    margin-bottom: 24px;
-  }
-
-  .texto-p {
-    font-size: 18px;
-    line-height: 1.9;
-    color: var(--text-main);
-    margin-bottom: 20px;
-    text-align: justify;
-    hyphens: auto;
-  }
-
-  .peticao-lista {
-    list-style: none;
-    margin: 28px 0;
-  }
-  .peticao-lista li {
-    display: flex;
-    gap: 14px;
-    align-items: flex-start;
-    font-size: 17.5px;
-    line-height: 1.85;
-    color: var(--text-main);
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid rgba(184,134,42,0.2);
-  }
-  .peticao-lista li:last-child { border-bottom: none; }
-  .peticao-lista li::before {
-    content: '✦';
-    color: var(--gold);
-    font-size: 14px;
-    flex-shrink: 0;
-    margin-top: 5px;
-  }
-
-  /* ── PEDIDO / INTENÇÕES ── */
-  .pedido-section {
-    background: var(--parchment);
-    border: 1px solid rgba(184,134,42,0.35);
-    border-radius: 10px;
-    padding: 28px 24px;
-    margin: 32px 0;
-  }
-  .pedido-section h3 {
-    font-family: 'Cinzel', serif;
-    font-size: 13px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--brown-mid);
-    text-align: center;
-    margin-bottom: 6px;
-  }
-  .pedido-section .pedido-subtitulo {
-    font-size: 14px;
-    color: var(--text-muted);
-    font-style: italic;
-    text-align: center;
-    margin-bottom: 18px;
-  }
-  .intencoes-lista {
-    list-style: none;
-    margin-bottom: 14px;
-  }
-  .intencao-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    background: rgba(255,255,255,0.5);
-    border: 1px solid rgba(184,134,42,0.25);
-    border-radius: 6px;
-    padding: 10px 12px;
-    margin-bottom: 8px;
-    font-size: 17px;
-    line-height: 1.6;
-    color: var(--text-main);
-    font-style: italic;
-  }
-  .intencao-item::before {
-    content: '✦';
-    color: var(--gold);
-    font-size: 11px;
-    flex-shrink: 0;
-    margin-top: 4px;
-  }
-  .intencao-item .del-btn {
-    margin-left: auto;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--brown-light);
-    font-size: 14px;
-    opacity: 0.5;
-    flex-shrink: 0;
-    padding: 0 2px;
-    transition: opacity 0.2s;
-  }
-  .intencao-item .del-btn:hover { opacity: 1; color: var(--red-dark); }
-
-  .adicionar-intencao {
-    display: flex;
-    gap: 8px;
-    align-items: flex-start;
-    flex-wrap: wrap;
-  }
-  .intencao-input {
-    flex: 1;
-    min-width: 180px;
-    font-family: 'Crimson Text', Georgia, serif;
-    font-size: 17px;
-    font-style: italic;
-    color: var(--text-main);
-    background: rgba(255,255,255,0.7);
-    border: 1.5px solid rgba(184,134,42,0.4);
-    border-radius: 6px;
-    padding: 10px 14px;
-    resize: none;
-    outline: none;
-    transition: border-color 0.2s;
-    line-height: 1.5;
-  }
-  .intencao-input:focus { border-color: var(--gold); }
-  .intencao-input::placeholder { color: var(--text-muted); opacity: 0.7; }
-  .add-btn {
-    font-family: 'Cinzel', serif;
-    font-size: 12px;
-    letter-spacing: 1px;
-    padding: 10px 18px;
-    background: var(--brown-mid);
-    color: var(--gold-pale);
-    border: 1px solid var(--gold);
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-  .add-btn:hover {
-    background: var(--gold);
-    color: var(--brown-deep);
-  }
-  .intencoes-vazia {
-    font-size: 15px;
-    color: var(--text-muted);
-    font-style: italic;
-    text-align: center;
-    padding: 8px 0 14px;
-    opacity: 0.7;
-  }
-
-  /* ── INVOCAÇÃO FINAL ── */
-  .invocacao-final {
-    margin: 32px 0;
-    text-align: center;
-  }
-  .invocacao-final p {
-    font-size: 18px;
-    line-height: 2;
-    color: var(--text-main);
-    margin-bottom: 6px;
-  }
-  .invocacao-final .resposta {
-    font-style: italic;
-    color: var(--red-dark);
-  }
-
-  /* ── OREMOS ── */
-  .oremos-block {
-    background: linear-gradient(135deg, rgba(139,30,30,0.06), rgba(184,134,42,0.06));
-    border: 1px solid rgba(139,30,30,0.2);
-    border-radius: 10px;
-    padding: 28px 24px;
-    margin: 0 0 16px;
-  }
-  .oremos-block .oremos-titulo {
-    font-family: 'Cinzel', serif;
-    font-weight: 600;
-    font-size: 14px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--red-dark);
-    margin-bottom: 14px;
-    text-align: center;
-  }
-  .oremos-block p {
-    font-size: 18px;
-    line-height: 1.85;
-    color: var(--text-main);
-    text-align: justify;
-  }
-  .oremos-block .amem {
-    font-family: 'Cinzel', serif;
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--brown-mid);
-    text-align: center;
-    margin-top: 16px;
-    letter-spacing: 2px;
-  }
-
-  /* ── BOTÃO MARCAR DIA ── */
-  .marcar-btn-wrap {
-    text-align: center;
-    margin: 40px 0 20px;
-  }
-  .marcar-btn {
-    font-family: 'Cinzel', serif;
-    font-size: 14px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 14px 36px;
-    background: linear-gradient(135deg, var(--brown-deep) 0%, var(--brown-mid) 100%);
-    color: var(--gold-pale);
-    border: 2px solid var(--gold);
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-  }
-  .marcar-btn:hover {
-    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
-    color: var(--brown-deep);
-    box-shadow: 0 6px 28px rgba(184,134,42,0.4);
-    transform: translateY(-1px);
-  }
-  .marcar-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-  }
-
-  .toast {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: var(--brown-deep);
-    color: var(--gold-pale);
-    font-family: 'Cinzel', serif;
-    font-size: 13px;
-    letter-spacing: 1px;
-    padding: 14px 28px;
-    border-radius: 40px;
-    border: 1px solid var(--gold);
-    transition: transform 0.4s ease;
-    z-index: 999;
-    white-space: nowrap;
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-
-  footer {
-    text-align: center;
-    padding: 32px 20px 0;
-    font-size: 13px;
-    color: var(--text-muted);
-    font-style: italic;
-    opacity: 0.7;
-  }
+  /* resumo */
+  .resumo-block{background:var(--bg-card);border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:var(--shadow);animation:rise .4s ease both}
+  .resumo-head{font-family:'Fraunces';font-size:18px;font-weight:600;color:var(--rose-deep);text-transform:capitalize}
+  .resumo-stats{font-size:13px;color:var(--ink-soft);margin:6px 0 10px}
+  .narrative{font-size:14px;line-height:1.6;background:#faf3ec;border-left:3px solid var(--terra);border-radius:0 12px 12px 0;padding:11px 13px;margin-bottom:12px;color:var(--ink)}
+  .narrative b{color:var(--rose-deep)}
+  .rchips{display:flex;flex-wrap:wrap;gap:6px}
+  .rchip{font-size:11.5px;font-weight:700;background:var(--cream);color:var(--ink);padding:4px 10px;border-radius:999px}
+  .resumo-toggle{margin-top:12px;background:none;border:1px solid var(--line);color:var(--rose-deep);font-weight:700;font-size:12.5px;padding:7px 14px;border-radius:999px;cursor:pointer;font-family:'Nunito Sans'}
+  .resumo-items{margin-top:12px}
+  mark{background:#ffe7a8;color:var(--ink);border-radius:4px;padding:0 2px}
+  .filter-box{background:var(--bg-card);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:14px;box-shadow:var(--shadow)}
+  .filter-box input[type=text]{margin-bottom:8px}
+  .filter-row{display:flex;gap:8px}
+  .filter-row select{flex:1;min-width:0}
+  .filter-clear{margin-top:10px;background:var(--cream);border:none;color:var(--ink);font-weight:700;font-size:12.5px;padding:7px 14px;border-radius:999px;cursor:pointer;font-family:'Nunito Sans'}
+  .age-units-pick{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+  .age-units-pick button{border:1px solid var(--line);background:var(--bg-card);color:var(--ink-soft);padding:9px 16px;border-radius:999px;font-size:14px;font-weight:700;font-family:'Nunito Sans';cursor:pointer;transition:.2s}
+  .age-units-pick button.on{background:var(--rose-deep);color:#fff;border-color:var(--rose-deep);box-shadow:var(--shadow)}
+  .age-counter{background:linear-gradient(135deg,var(--rose-deep),var(--terra));color:#fff;border-radius:24px;padding:36px 20px;text-align:center;box-shadow:var(--shadow-lg);margin-bottom:16px}
+  .age-counter .ac-num{font-family:'Fraunces';font-size:52px;font-weight:700;line-height:1;word-break:break-word}
+  .age-counter .ac-label{font-size:15px;font-weight:700;opacity:.9;margin-top:8px;text-transform:uppercase;letter-spacing:1px}
+  .age-detail{text-align:center;font-family:'Fraunces';font-size:17px;font-weight:600;color:var(--ink);line-height:1.5}
 </style>
 </head>
 <body>
-
 <header>
-  <span class="cross-icon">✝</span>
-  <h1>
-    Trintena de
-    <span>São José</span>
-  </h1>
+  <span class="leaf l1">🌿</span><span class="leaf l2">🌸</span>
+  <button class="gear" onclick="toggleSettings()" aria-label="Ajustes">⚙️</button>
+  <h1>Diário da <span class="accent" id="babyName">minha filha</span></h1>
+  <div class="age-clock" id="ageClock" style="display:none"></div>
+  <button class="backup-main" onclick="doBackup()">💾 Fazer backup</button>
+
+  <div class="settings-panel" id="settingsPanel">
+    <div class="set-label">👶 Nome do filho(a)</div>
+    <div style="padding:0 10px 8px"><input type="text" id="nameField" placeholder="Ex.: Maria" style="font-size:14px"></div>
+    <div class="set-label" style="padding-top:0">🎂 Data de nascimento</div>
+    <div style="padding:0 10px 8px"><input type="date" id="birthField" style="font-size:14px" oninput="updateBirthPreview()"><div id="birthPreview" style="font-size:12px;color:var(--ink-soft);margin-top:4px"></div></div>
+    <div style="padding:0 10px 8px"><button class="set-save" onclick="saveProfile()">Salvar</button></div>
+    <div class="set-divider"></div>
+    <div class="set-label">🎨 Tema do diário</div>
+    <div class="theme-swatches" id="themeSwatches"></div>
+    <div class="set-divider"></div>
+    <button class="set-item" onclick="document.getElementById('importFile').click()">⬆️ Importar backup</button>
+    <input type="file" id="importFile" accept=".json" style="display:none">
+    <div class="set-divider"></div>
+    <button class="set-item" id="connectDriveBtn" onclick="connectDrive()">📁 Conectar pasta do Drive</button>
+    <button class="set-item" id="saveDriveBtn" onclick="saveToDrive()" style="display:none">💾 Salvar na pasta do Drive</button>
+    <div id="driveStatus" style="font-size:11.5px;color:var(--ink-soft);margin-top:8px;line-height:1.4"></div>
+  </div>
 </header>
 
-<!-- TRACKER DE 30 DIAS -->
-<div class="tracker-section">
-  <p class="tracker-titulo">Marque os dias rezados</p>
-  <div class="dias-grid" id="diasGrid"></div>
-  <div class="progresso-bar-wrap">
-    <div class="progresso-bar" id="progressoBar" style="width:0%"></div>
-  </div>
-  <p class="progresso-texto" id="progressoTexto">0 de 30 dias rezados</p>
-</div>
+<nav class="tabs" id="tabs">
+  <button class="active" data-view="registros">📖 Registros</button>
+  <button data-view="linha">✨ Linha do tempo</button>
+  <button data-view="tema">🏷️ Por tema</button>
+  <button data-view="resumo">📊 Resumo</button>
+  <button data-view="busca">🔍 Buscar</button>
+  <button data-view="idade">🎂 Idade</button>
+</nav>
 
-<div class="divider"><span>✦</span></div>
+<div class="wrap" id="content"></div>
 
-<!-- TEXTO DA ORAÇÃO -->
-<div class="oracao-container">
+<button class="fab" onclick="openSheet()">＋ Novo registro</button>
 
-  <p class="invocacao">Ó amabilíssimo patriarca São José!</p>
+<!-- MODAL -->
+<div class="overlay" id="overlay">
+  <div class="sheet">
+    <div class="grab"></div>
+    <h2>Novo registro</h2>
 
-  <div class="intro-block">
-    Desde o abismo da minha pequenez e miséria contemplo-Vos com emoção e alegria da minha alma em Vosso trono do céu, como glória e gozo dos bem-aventurados, mas também como pai dos órfãos na terra, consolador dos tristes, amparador dos desvalidos, auxiliador dos anjos e santos diante do trono de Deus, de Vosso Jesus e de vossa Santa Esposa.
-  </div>
+    <label>Este registro é de um...</label>
+    <div class="seg" id="scopeSeg">
+      <button class="on" data-scope="dia">📅 Dia</button>
+      <button data-scope="semana">🗓️ Semana</button>
+    </div>
 
-  <p class="texto-p">
-    Por isso, eu, pobre, desvalido, triste e necessitado, a Vós dirijo hoje e sempre minhas lágrimas e penas, minhas súplicas e clamores da alma, meus arrependimentos e minhas esperanças; e especialmente hoje, trago-Vos diante do Vosso altar e da Vossa imagem uma pena que consoleis, um mal que remedieis, uma desgraça que impeçais, uma necessidade que socorrais, uma graça que obtenhais para mim e para meus seres queridos.
-  </p>
+    <label>Título <span style="font-weight:400">(opcional)</span></label>
+    <input type="text" id="fTitle" placeholder="Ex.: Primeiro sorriso">
 
-  <p class="texto-p">
-    E para comover-Vos e obrigar-Vos a ouvir-me e obter-me estas graças, Vo-las pedirei e demandarei durante trinta dias contínuos, em reverência aos trinta anos que vivestes na terra com Jesus e Maria e o farei urgente e confiantemente, invocando todos os títulos que tendes para compadecer-Vos de mim e de todos os motivos que tenho para esperar que não dilatareis ao ouvir minha súplica e remediar minha necessidade sendo tão certa minha fé em Vossa bondade e poder, que ao senti-la, Vos sentireis também obrigado a obter e dar-me ainda mais do que Vos peço e desejo.
-  </p>
+    <label>Data</label>
+    <input type="date" id="fDate">
 
-  <ul class="peticao-lista">
-    <li>Peço-Vos pela bondade divina que obrigou ao Verbo Eterno a encarnar-se e nascer na pobre natureza humana, como Filho de Deus, Deus homem e Deus dos homens.</li>
-    <li>Suplico-Vos por vossa ansiedade imensa ao sentir-Vos obrigado a abandonar a Vossa Santa Esposa.</li>
-    <li>Rogo-Vos por Vossa resignação dolorosíssima para buscar um estábulo e um presépio para palácio e manjedoura de Deus nascido entre os homens.</li>
-    <li>Imploro-Vos pela dolorosa e humilhante circuncisão de Vosso Jesus; e pelo Santo, Glorioso e Dulcíssimo nome que lhe impusestes por ordem do Pai Celeste.</li>
-    <li>Demando-Vos por Vosso sobressalto ao ouvir do anjo a morte decretada contra Vosso Filho Deus; por Vossa obedientíssima fuga ao Egito, pelas penalidades e perigos do caminho, pela pobreza extrema do desterro e por Vossas ansiedades ao voltar do Egito a Nazaré.</li>
-    <li>Peço-Vos por Vossa aflição dolorosíssima de três dias, ao perder Vosso Filho e por Vossa consolação suavíssima ao encontrá-lo no templo; por Vossa felicidade inefável dos trinta anos que tivestes em Nazaré com Jesus e Maria sujeitos à Vossa autoridade e providência.</li>
-    <li>Rogo-Vos e espero pelo heroico sacrifício com que oferecestes a vítima de Vosso Jesus ao Deus Eterno, para a cruz e para a morte, pelos nossos pecados e nossa redenção.</li>
-    <li>Demando-Vos pela dolorosa previsão que fazíeis todos os dias ao contemplar aquelas mãos infantis perfuradas depois na Cruz por pregos agudos; aquela cabeça que se reclinava dulcissimamente sobre Vosso peito, coroada de espinhos; aquele divino corpo que apertáveis contra o Vosso coração, despido, ensanguentado e estendido sobre os braços da Cruz naquele último momento que lhe víeis expirar e morrer.</li>
-    <li>Peço-Vos por Vossa dulcíssima passagem desta vida nos braços de Jesus e Maria, Vossa entrada no limbo dos Justos e ao fim nos céus.</li>
-    <li>Suplico-Vos por Vosso gozo e Vossa glória, quando contemplastes a Ressurreição do Vosso Jesus, sua subida e entrada nos céus, seu trono de Rei imortal dos séculos.</li>
-    <li>Demando-Vos por Vosso inefável júbilo, quando vistes sair do sepulcro a Vossa Santíssima Esposa ressuscitada, e ser assunta ao céu pelos anjos, coroada pelo Eterno e entronizada num sólio junto ao Vosso.</li>
-    <li>Peço-Vos e rogo-Vos confiantemente pelos Vossos trabalhos, penalidades e sacrifícios na terra e por Vossos triunfos, glórias e feliz bem-aventurança nos céus, com Vosso Filho Jesus e Vossa esposa Santa Maria.</li>
-  </ul>
+    <label>Tema</label>
+    <div class="theme-pick" id="themePick"></div>
 
-  <p class="texto-p">
-    Ó meu bom patriarca São José! Eu, inspirado nos ensinamentos da Santa Igreja, de seus Doutores e Teólogos, e no sentido universal do povo cristão, sinto em mim uma força misteriosa, que me alenta e obriga a pedir-Vos e suplicar-Vos e esperar que me obtenhais de Deus a grande e extraordinária graça que vou por diante da Vossa imagem e do Vosso trono de bondade e poder nos céus:
-  </p>
+    <label>Áudio</label>
+    <div class="rec-row">
+      <button class="rec-btn rec-start" id="recBtnPlain">🎙️ Só gravar áudio</button>
+      <button class="rec-btn rec-transcribe" id="recBtnTrans">✍️ Gravar + transcrever</button>
+    </div>
+    <div class="rec-note" id="recNote">“Gravar + transcrever” converte sua fala em texto na hora (só no Chrome do PC/Android, com microfone permitido). “Só gravar” salva o áudio sem texto.</div>
+    <div id="audioPreview"></div>
 
-  <div class="pedido-section">
-    <h3>✦ Suas Intenções ✦</h3>
-    <p class="pedido-subtitulo">Escreva aqui os pedidos que apresenta a São José</p>
-    <ul class="intencoes-lista" id="intencoesList"></ul>
-    <div class="adicionar-intencao">
-      <textarea
-        class="intencao-input"
-        id="intencaoInput"
-        rows="2"
-        placeholder="Escreva sua intenção e pressione Adicionar…"
-      ></textarea>
-      <button class="add-btn" onclick="adicionarIntencao()">+ Adicionar</button>
+    <label>Texto / transcrição <span style="font-weight:400">(pode editar)</span></label>
+    <textarea id="fText" placeholder="Escreva aqui ou deixe a gravação preencher..."></textarea>
+
+    <label>Fotos e vídeos</label>
+    <input type="file" id="fMedia" accept="image/*,video/*" multiple style="font-size:13px">
+    <div class="filepreview" id="mediaPreview"></div>
+
+    <div class="savebar">
+      <button class="cancel" onclick="closeSheet()">Cancelar</button>
+      <button class="save" onclick="saveEntry()">Salvar registro</button>
     </div>
   </div>
-
-  <p class="texto-p">
-    Obtende-me também para os meus e para os que pediram que rogue por eles, tudo quanto desejam e lhes é conveniente.
-  </p>
-
-  <div class="invocacao-final">
-    <p>– Rogai por nós, ó glorioso patriarca São José.</p>
-    <p class="resposta">– Para que sejamos dignos das promessas de Cristo.</p>
-  </div>
-
-  <div class="oremos-block">
-    <p class="oremos-titulo">Oremos</p>
-    <p>
-      Ó Deus, que em vossa inefável Providência escolhestes São José para esposo de Maria, Mãe do Vosso Filho, fazei que, venerando-o na terra como protetor, mereçamos tê-lo como intercessor nos céus. Por Nosso Senhor Jesus Cristo, Vosso Filho, na unidade do Espírito Santo.
-    </p>
-    <p class="amem">Amém. ✝</p>
-  </div>
-
-  <!-- BOTÃO MARCAR -->
-  <div class="marcar-btn-wrap">
-    <button class="marcar-btn" id="marcarBtn" onclick="marcarHoje()">
-      ✦ Marcar oração de hoje ✦
-    </button>
-  </div>
-
 </div>
 
-<footer>
-  <p>Rezada com fé ✦ 30 dias em honra dos 30 anos de São José com Jesus e Maria</p>
-  <p style="margin-top:10px; font-size:11px; opacity:0.4; letter-spacing:1px;">feito por: @nandamotab</p>
-</footer>
-
+<div class="lightbox" id="lightbox"><button class="close" onclick="closeLightbox()">×</button><div id="lbContent"></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
-  const STORAGE_KEY = 'trintena_sao_jose_dias';
-  const INTENCOES_KEY = 'trintena_sao_jose_intencoes';
-
-  function getDias() {
-    try {
-      const d = localStorage.getItem(STORAGE_KEY);
-      return d ? JSON.parse(d) : [];
-    } catch { return []; }
-  }
-
-  function salvarDias(dias) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(dias));
-  }
-
-  function renderGrid() {
-    const dias = getDias();
-    const grid = document.getElementById('diasGrid');
-    grid.innerHTML = '';
-    for (let i = 1; i <= 30; i++) {
-      const btn = document.createElement('button');
-      btn.className = 'dia-btn' + (dias.includes(i) ? ' rezado' : '');
-      btn.textContent = i;
-      btn.title = dias.includes(i) ? `Dia ${i} — Rezado ✓` : `Dia ${i}`;
-      btn.onclick = () => toggleDia(i);
-      grid.appendChild(btn);
-    }
-    atualizarProgresso(dias.length);
-    atualizarBotao(dias);
-  }
-
-  function toggleDia(n) {
-    let dias = getDias();
-    if (dias.includes(n)) {
-      dias = dias.filter(d => d !== n);
-    } else {
-      dias.push(n);
-      dias.sort((a,b) => a - b);
-    }
-    salvarDias(dias);
-    renderGrid();
-  }
-
-  function proximoDia() {
-    const dias = getDias();
-    for (let i = 1; i <= 30; i++) {
-      if (!dias.includes(i)) return i;
-    }
-    return null;
-  }
-
-  function marcarHoje() {
-    const proximo = proximoDia();
-    if (proximo === null) {
-      showToast('Trintena completa! Glória a Deus! 🙏');
-      return;
-    }
-    let dias = getDias();
-    dias.push(proximo);
-    dias.sort((a,b) => a - b);
-    salvarDias(dias);
-    renderGrid();
-    showToast(`Dia ${proximo} marcado ✓ — Ad maiorem Dei gloriam`);
-  }
-
-  function atualizarProgresso(total) {
-    const pct = (total / 30) * 100;
-    document.getElementById('progressoBar').style.width = pct + '%';
-    const txt = total === 30
-      ? '🙏 Trintena completa! Glória a São José!'
-      : total === 0
-        ? 'Comece sua jornada de oração'
-        : `${total} de 30 dias rezados`;
-    document.getElementById('progressoTexto').textContent = txt;
-  }
-
-  function atualizarBotao(dias) {
-    const btn = document.getElementById('marcarBtn');
-    const proximo = proximoDia();
-    if (proximo === null) {
-      btn.textContent = '✦ Trintena Completa ✦';
-      btn.disabled = true;
-    } else {
-      btn.textContent = `✦ Marcar Dia ${proximo} ✦`;
-      btn.disabled = false;
-    }
-  }
-
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
-  }
-
-  /* ── INTENÇÕES ── */
-  function getIntencoes() {
-    try {
-      const d = localStorage.getItem(INTENCOES_KEY);
-      return d ? JSON.parse(d) : [];
-    } catch { return []; }
-  }
-
-  function salvarIntencoes(lista) {
-    localStorage.setItem(INTENCOES_KEY, JSON.stringify(lista));
-  }
-
-  function renderIntencoes() {
-    const lista = getIntencoes();
-    const ul = document.getElementById('intencoesList');
-    ul.innerHTML = '';
-    if (lista.length === 0) {
-      ul.innerHTML = '<li class="intencoes-vazia">Nenhuma intenção adicionada ainda.</li>';
-      return;
-    }
-    lista.forEach((texto, idx) => {
-      const li = document.createElement('li');
-      li.className = 'intencao-item';
-      li.innerHTML = `<span>${texto}</span><button class="del-btn" title="Remover" onclick="removerIntencao(${idx})">✕</button>`;
-      ul.appendChild(li);
-    });
-  }
-
-  function adicionarIntencao() {
-    const input = document.getElementById('intencaoInput');
-    const texto = input.value.trim();
-    if (!texto) return;
-    const lista = getIntencoes();
-    lista.push(texto);
-    salvarIntencoes(lista);
-    input.value = '';
-    renderIntencoes();
-    showToast('Intenção adicionada 🙏');
-  }
-
-  function removerIntencao(idx) {
-    const lista = getIntencoes();
-    lista.splice(idx, 1);
-    salvarIntencoes(lista);
-    renderIntencoes();
-  }
-
-  // Adicionar com Enter (Shift+Enter = quebra de linha)
-  document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('intencaoInput').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        adicionarIntencao();
-      }
-    });
+/* ---------- IndexedDB setup ---------- */
+let db;
+const DBNAME='diarioFilha', STORE='entries', META='meta';
+function openDB(){
+  return new Promise((res,rej)=>{
+    const r=indexedDB.open(DBNAME,1);
+    r.onupgradeneeded=e=>{
+      const d=e.target.result;
+      if(!d.objectStoreNames.contains(STORE)) d.createObjectStore(STORE,{keyPath:'id'});
+      if(!d.objectStoreNames.contains(META)) d.createObjectStore(META,{keyPath:'key'});
+    };
+    r.onsuccess=e=>{db=e.target.result;res()};
+    r.onerror=e=>rej(e);
   });
+}
+function tx(store,mode){return db.transaction(store,mode).objectStore(store)}
+function putEntry(o){return new Promise(r=>{tx(STORE,'readwrite').put(o).onsuccess=()=>r()})}
+function delEntry(id){return new Promise(r=>{tx(STORE,'readwrite').delete(id).onsuccess=()=>r()})}
+function allEntries(){return new Promise(r=>{tx(STORE,'readonly').getAll().onsuccess=e=>r(e.target.result)})}
+function putMeta(k,v){return new Promise(r=>{tx(META,'readwrite').put({key:k,value:v}).onsuccess=()=>r()})}
+function getMeta(k){return new Promise(r=>{tx(META,'readonly').get(k).onsuccess=e=>r(e.target.result?e.target.result.value:null)})}
 
-  renderGrid();
-  renderIntencoes();
+/* ---------- Themes ---------- */
+const THEMES=[
+  {id:'marcos',label:'Marcos',ic:'⭐'},
+  {id:'sono',label:'Sono',ic:'😴'},
+  {id:'comida',label:'Comida',ic:'🍼'},
+  {id:'saude',label:'Saúde',ic:'🩺'},
+  {id:'passeio',label:'Passeios',ic:'🌳'},
+  {id:'fala',label:'Falas/sons',ic:'💬'},
+  {id:'humor',label:'Humor',ic:'😊'},
+  {id:'familia',label:'Família',ic:'👨‍👩‍👧'},
+  {id:'outros',label:'Outros',ic:'📝'},
+];
+const themeOf=id=>THEMES.find(t=>t.id===id)||THEMES[8];
+
+/* ---------- Paletas de cores ---------- */
+const PALETTES=[
+  {id:'rosa', nm:'Rosa', vars:{'--bg':'#fdf6f0','--bg-card':'#fffdfb','--ink':'#3a2e29','--ink-soft':'#7a6a62','--rose':'#d98b8b','--rose-deep':'#c06b6b','--terra':'#e8a87c','--sage':'#9bab8a','--cream':'#f5e6d8','--line':'#ecdfd4'}, hdr:'#fbeae0'},
+  {id:'lavanda', nm:'Lavanda', vars:{'--bg':'#f7f4fb','--bg-card':'#fffdff','--ink':'#352f40','--ink-soft':'#6f6580','--rose':'#a98bd9','--rose-deep':'#8b6bc0','--terra':'#c79be0','--sage':'#9ba8d9','--cream':'#ece4f5','--line':'#e3dcef'}, hdr:'#efe7f9'},
+  {id:'menta', nm:'Menta', vars:{'--bg':'#f0faf5','--bg-card':'#fbfffd','--ink':'#293a32','--ink-soft':'#62786c','--rose':'#7cc0a0','--rose-deep':'#5aa884','--terra':'#8ad0b8','--sage':'#8abf9b','--cream':'#dcf0e6','--line':'#d4ece0'}, hdr:'#e0f5ea'},
+  {id:'ceu', nm:'Céu', vars:{'--bg':'#f0f6fb','--bg-card':'#fbfdff','--ink':'#28333f','--ink-soft':'#5f6e80','--rose':'#7ca8d9','--rose-deep':'#5a87c0','--terra':'#7cc0d0','--sage':'#8aabbf','--cream':'#dce8f5','--line':'#d4e0ec'}, hdr:'#e0edf9'},
+  {id:'sol', nm:'Sol', vars:{'--bg':'#fdfaef','--bg-card':'#fffefb','--ink':'#3f3729','--ink-soft':'#807162','--rose':'#e0b35a','--rose-deep':'#c99a3a','--terra':'#e8c87c','--sage':'#bfae8a','--cream':'#f5edd8','--line':'#ece4d4'}, hdr:'#faf2e0'},
+  {id:'noite', nm:'Noite', vars:{'--bg':'#26222b','--bg-card':'#322d38','--ink':'#f0eaf2','--ink-soft':'#b8aec0','--rose':'#d98bb0','--rose-deep':'#e6a0c0','--terra':'#e0a87c','--sage':'#9bab8a','--cream':'#3d3647','--line':'#433c4e'}, hdr:'#2e2935'},
+];
+let currentPalette='rosa';
+function applyPalette(id){
+  const p=PALETTES.find(x=>x.id===id)||PALETTES[0];
+  currentPalette=p.id;
+  const root=document.documentElement;
+  Object.entries(p.vars).forEach(([k,v])=>root.style.setProperty(k,v));
+  const hdr=document.querySelector('header');
+  if(hdr)hdr.style.background=`linear-gradient(160deg, ${p.hdr} 0%, ${p.vars['--bg']} 100%)`;
+  renderSwatches();
+}
+function renderSwatches(){
+  const c=document.getElementById('themeSwatches');
+  if(!c)return;
+  c.innerHTML=PALETTES.map(p=>`
+    <div class="swatch ${p.id===currentPalette?'active':''}" data-p="${p.id}">
+      <div class="dots">
+        <span style="background:${p.vars['--rose-deep']}"></span>
+        <span style="background:${p.vars['--terra']}"></span>
+        <span style="background:${p.vars['--bg']}"></span>
+      </div>
+      <span class="nm">${p.nm}</span>
+    </div>`).join('');
+  c.querySelectorAll('.swatch').forEach(s=>s.onclick=async()=>{applyPalette(s.dataset.p);await putMeta('palette',s.dataset.p);toast('Tema aplicado 🎨')});
+}
+
+/* ---------- State ---------- */
+let view='registros', scope='dia', selTheme='marcos';
+let regMode='dia';
+let resumoMode='semana', searchTerm='';
+let tlPeriod='all', tlTheme='all', tlSearch='';
+let ageUnit='dias';
+let pendingMedia=[]; // {type,blob}
+let pendingAudio=null;
+let recognition=null, mediaRec=null, audioChunks=[], recording=false;
+let babyName='minha filha', birth=null;
+
+/* ---------- Utils ---------- */
+function fmtDate(iso){const d=new Date(iso+'T00:00:00');return d.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
+function fmtShort(iso){const d=new Date(iso+'T00:00:00');return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})}
+function weekKey(iso){const d=new Date(iso+'T00:00:00');const day=d.getDay();const monday=new Date(d);monday.setDate(d.getDate()-((day+6)%7));const sun=new Date(monday);sun.setDate(monday.getDate()+6);return monday.toISOString().slice(0,10)+'|'+`Semana de ${monday.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})} a ${sun.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})}`}
+function babyAge(iso){
+  if(!birth)return'';
+  const b=new Date(birth+'T00:00:00'),d=new Date(iso+'T00:00:00');
+  let totalDays=Math.round((d-b)/864e5);
+  if(totalDays<0)return'';
+  if(totalDays===0)return'recém-nascida';
+  // meses de calendário
+  let months=(d.getFullYear()-b.getFullYear())*12+(d.getMonth()-b.getMonth());
+  let anchor=new Date(b.getFullYear(),b.getMonth()+months,b.getDate());
+  if(anchor>d){months--;anchor=new Date(b.getFullYear(),b.getMonth()+months,b.getDate());}
+  let remDays=Math.round((d-anchor)/864e5);
+  let weeks=Math.floor(remDays/7);
+  let days=remDays-weeks*7;
+  const parts=[];
+  const years=Math.floor(months/12);
+  const remMonths=months%12;
+  if(years>0)parts.push(`${years} ano${years>1?'s':''}`);
+  if(remMonths>0)parts.push(`${remMonths} ${remMonths>1?'meses':'mês'}`);
+  if(weeks>0)parts.push(`${weeks} semana${weeks>1?'s':''}`);
+  if(days>0||parts.length===0)parts.push(`${days} dia${days!==1?'s':''}`);
+  return parts.join(' ');
+}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+function blobURL(b){return URL.createObjectURL(b)}
+
+/* ---------- Render ---------- */
+async function render(){
+  const data=(await allEntries()).sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
+  const c=document.getElementById('content');
+  updateAgeHero();
+
+  if(data.length===0){
+    c.innerHTML=`<div class="empty"><span class="big">🍼</span>Ainda não há registros.<br>Toque em <b>＋ Novo registro</b> para começar a guardar memórias.</div>`;return;
+  }
+
+  // stats
+  const dias=new Set(data.map(d=>d.date)).size;
+  const mid=data.reduce((s,d)=>s+(d.media?d.media.length:0),0);
+  let html=`<div class="stat-row">
+    <div class="stat"><div class="n">${data.length}</div><div class="l">registros</div></div>
+    <div class="stat"><div class="n">${dias}</div><div class="l">dias</div></div>
+    <div class="stat"><div class="n">${mid}</div><div class="l">fotos/vídeos</div></div>
+  </div>`;
+
+  if(view==='registros'){
+    html+=`<div class="seg" id="regSeg" style="margin-bottom:14px">
+      <button class="${regMode==='dia'?'on':''}" data-reg="dia">📅 Dia</button>
+      <button class="${regMode==='semana'?'on':''}" data-reg="semana">🗓️ Semana</button>
+    </div>`;
+    if(regMode==='dia'){
+      const byDay={};data.filter(d=>d.scope==='dia').forEach(d=>{(byDay[d.date]=byDay[d.date]||[]).push(d)});
+      const keys=Object.keys(byDay).sort((a,b)=>b.localeCompare(a));
+      if(!keys.length)html+=`<div class="empty"><span class="big">📅</span>Nenhum registro de dia ainda.<br><span style="font-size:12px">Toque em ＋ e escolha “Dia”.</span></div>`;
+      keys.forEach(k=>{html+=`<div class="group-head">${fmtDate(k)}${birth&&babyAge(k)?' · '+babyAge(k):''}</div>`;byDay[k].forEach(e=>html+=card(e))});
+    }else{
+      const byWeek={};data.filter(d=>d.scope==='semana').forEach(d=>{const k=weekKey(d.date);(byWeek[k]=byWeek[k]||[]).push(d)});
+      const keys=Object.keys(byWeek).sort((a,b)=>b.localeCompare(a));
+      if(!keys.length)html+=`<div class="empty"><span class="big">🗓️</span>Nenhum registro semanal ainda.<br><span style="font-size:12px">Toque em ＋ e escolha “Semana”.</span></div>`;
+      keys.forEach(k=>{html+=`<div class="group-head">${k.split('|')[1]}</div>`;byWeek[k].forEach(e=>html+=card(e))});
+    }
+  }
+  else if(view==='linha'){
+    html+=`<div class="section-title">Linha do tempo</div><div class="section-sub">Tudo junto, com filtros.</div>`;
+    // controles de filtro
+    const themeOpts=THEMES.map(t=>`<option value="${t.id}" ${tlTheme===t.id?'selected':''}>${t.ic} ${t.label}</option>`).join('');
+    html+=`<div class="filter-box">
+      <input type="text" id="tlSearch" placeholder="🔍 palavra-chave..." value="${escapeAttr(tlSearch)}">
+      <div class="filter-row">
+        <select id="tlPeriod">
+          <option value="all" ${tlPeriod==='all'?'selected':''}>Todo o período</option>
+          <option value="7" ${tlPeriod==='7'?'selected':''}>Últimos 7 dias</option>
+          <option value="30" ${tlPeriod==='30'?'selected':''}>Últimos 30 dias</option>
+          <option value="90" ${tlPeriod==='90'?'selected':''}>Últimos 3 meses</option>
+          <option value="365" ${tlPeriod==='365'?'selected':''}>Último ano</option>
+        </select>
+        <select id="tlTheme">
+          <option value="all" ${tlTheme==='all'?'selected':''}>Todos os temas</option>
+          ${themeOpts}
+        </select>
+      </div>
+      ${(tlSearch||tlPeriod!=='all'||tlTheme!=='all')?`<button class="filter-clear" onclick="clearFilters()">✕ limpar filtros</button>`:''}
+    </div>`;
+    // aplica filtros
+    let filtered=data.slice();
+    if(tlPeriod!=='all'){const cutoff=new Date();cutoff.setDate(cutoff.getDate()-parseInt(tlPeriod));const cs=cutoff.toISOString().slice(0,10);filtered=filtered.filter(e=>e.date>=cs)}
+    if(tlTheme!=='all')filtered=filtered.filter(e=>e.theme===tlTheme);
+    const q=tlSearch.trim().toLowerCase();
+    if(q)filtered=filtered.filter(e=>((e.title||'')+' '+(e.text||'')+' '+(e.transcript||'')).toLowerCase().includes(q));
+    html+=`<div class="section-sub">${filtered.length} registro${filtered.length!==1?'s':''}.</div>`;
+    html+=`<div class="timeline">`;
+    if(!filtered.length)html+=`<div class="empty"><span class="big">🔍</span>Nada encontrado com esses filtros.</div>`;
+    filtered.forEach(e=>html+=card(e,q||null));html+=`</div>`;
+  }
+  else if(view==='tema'){
+    html+=`<div class="section-title">Por tema</div><div class="section-sub">Toque para ver tudo de cada assunto.</div>`;
+    THEMES.forEach(t=>{const items=data.filter(d=>d.theme===t.id);if(!items.length)return;
+      html+=`<div class="group-head">${t.ic} ${t.label} <span style="font-weight:400;font-size:13px;color:var(--ink-soft)">· ${items.length}</span></div>`;
+      items.forEach(e=>html+=card(e));});
+  }
+  else if(view==='resumo'){
+    html+=`<div class="section-title">Resumo</div><div class="section-sub">Análise automática dos seus registros, por período.</div>`;
+    html+=`<div class="seg" id="resumoSeg" style="margin-bottom:14px">
+      <button class="${resumoMode==='semana'?'on':''}" data-rm="semana">🗓️ Por semana</button>
+      <button class="${resumoMode==='mes'?'on':''}" data-rm="mes">📆 Por mês</button>
+    </div>`;
+    const groups={};
+    data.forEach(e=>{
+      let k;
+      if(resumoMode==='semana')k=weekKey(e.date);
+      else{const d=new Date(e.date+'T00:00:00');k=e.date.slice(0,7)+'|'+d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'})}
+      (groups[k]=groups[k]||[]).push(e);
+    });
+    const keys=Object.keys(groups).sort((a,b)=>b.localeCompare(a));
+    if(!keys.length)html+=`<div class="empty"><span class="big">📊</span>Sem registros ainda.</div>`;
+    keys.forEach(k=>{
+      const items=groups[k];
+      const themeCount={};items.forEach(e=>{themeCount[e.theme]=(themeCount[e.theme]||0)+1});
+      const mediaN=items.reduce((s,e)=>s+(e.media?e.media.length:0),0);
+      const audioN=items.filter(e=>e.audio).length;
+      const sorted=Object.entries(themeCount).sort((a,b)=>b[1]-a[1]);
+      const chips=sorted.map(([t,n])=>`<span class="rchip">${themeOf(t).ic} ${themeOf(t).label} ·${n}</span>`).join('');
+      const label=k.split('|')[1];
+      const narrative=buildNarrative(items,sorted,resumoMode);
+      html+=`<div class="resumo-block">
+        <div class="resumo-head">${label}</div>
+        <div class="resumo-stats">${items.length} registro${items.length>1?'s':''} · ${mediaN} mídia${mediaN!==1?'s':''} · ${audioN} áudio${audioN!==1?'s':''}</div>
+        <div class="narrative">✨ ${narrative}</div>
+        <div class="rchips">${chips}</div>
+        <button class="resumo-toggle" data-key="${encodeURIComponent(k)}">ver registros ▾</button>
+        <div class="resumo-items" id="ri-${encodeURIComponent(k)}" style="display:none">${items.map(e=>card(e)).join('')}</div>
+      </div>`;
+    });
+  }
+  else if(view==='busca'){
+    html+=`<div class="section-title">Buscar</div><div class="section-sub">Procure por palavra em textos e transcrições.</div>`;
+    html+=`<input type="text" id="searchBox" placeholder="🔍 Digite uma palavra..." value="${escapeAttr(searchTerm)}" style="margin-bottom:14px">`;
+    if(searchTerm.trim()){
+      const q=searchTerm.trim().toLowerCase();
+      const hits=data.filter(e=>((e.title||'')+' '+(e.text||'')+' '+(e.transcript||'')).toLowerCase().includes(q));
+      html+=`<div class="section-sub">${hits.length} resultado${hits.length!==1?'s':''} para “${escapeHtml(searchTerm.trim())}”.</div>`;
+      hits.forEach(e=>html+=card(e,q));
+      if(!hits.length)html+=`<div class="empty"><span class="big">🔍</span>Nada encontrado.</div>`;
+    }else{
+      html+=`<div class="empty"><span class="big">🔍</span>Digite uma palavra para buscar.</div>`;
+    }
+  }
+  else if(view==='idade'){
+    html+=`<div class="section-title">Idade</div>`;
+    if(!birth){
+      html+=`<div class="empty"><span class="big">🎂</span>Defina a data de nascimento em ⚙️ ajustes para ver o contador.</div>`;
+    }else{
+      html+=`<div class="section-sub">Escolha como quer ver a idade.</div>`;
+      const opts=[['anos','Anos'],['meses','Meses'],['semanas','Semanas'],['dias','Dias'],['horas','Horas'],['minutos','Minutos']];
+      html+=`<div class="age-units-pick">${opts.map(([v,l])=>`<button class="${ageUnit===v?'on':''}" data-au="${v}">${l}</button>`).join('')}</div>`;
+      html+=`<div class="age-counter" id="ageCounter"></div>`;
+      html+=`<div class="age-detail" id="ageDetail"></div>`;
+    }
+  }
+  c.innerHTML=html;
+  bindMedia();
+  if(view==='idade'&&birth){bindAgeUnits();renderAgeCounter();}
+  bindResumo();
+  bindSearch();
+  bindFilters();
+}
+function escapeAttr(s){return (s||'').replace(/"/g,'&quot;')}
+
+/* ---------- Resumo inteligente local (sem IA, offline) ---------- */
+function buildNarrative(items,sorted,mode){
+  const periodo = mode==='semana' ? 'Nesta semana' : 'Neste mês';
+  const n=items.length;
+  const parts=[];
+  // tema dominante
+  if(sorted.length){
+    const [topT,topN]=sorted[0];
+    const tl=themeOf(topT).label.toLowerCase();
+    if(topN>=Math.max(2, n*0.4) && sorted.length>1){
+      parts.push(`${periodo} o foco foi <b>${tl}</b> (${topN} de ${n} registros)`);
+    }else if(sorted.length>1){
+      const nomes=sorted.slice(0,2).map(([t])=>themeOf(t).label.toLowerCase());
+      parts.push(`${periodo} houve ${n} registros, principalmente sobre <b>${nomes.join('</b> e <b>')}</b>`);
+    }else{
+      parts.push(`${periodo} houve ${n} registro${n>1?'s':''} sobre <b>${tl}</b>`);
+    }
+  }
+  // marcos em destaque
+  const marcos=items.filter(e=>e.theme==='marcos');
+  if(marcos.length){
+    const snippet=marcos.map(m=>(m.text||m.transcript||'').trim()).filter(Boolean)[0];
+    if(snippet){
+      const s=snippet.length>90?snippet.slice(0,90).trim()+'…':snippet;
+      parts.push(`⭐ Marco registrado: “${escapeHtml(s)}”`);
+    }else{
+      parts.push(`⭐ ${marcos.length} marco${marcos.length>1?'s':''} registrado${marcos.length>1?'s':''}`);
+    }
+  }
+  // saúde
+  const saude=items.filter(e=>e.theme==='saude');
+  if(saude.length)parts.push(`🩺 ${saude.length} registro${saude.length>1?'s':''} de saúde`);
+  // mídia / áudio
+  const mediaN=items.reduce((s,e)=>s+(e.media?e.media.length:0),0);
+  const audioN=items.filter(e=>e.audio).length;
+  const mem=[];
+  if(mediaN)mem.push(`${mediaN} foto${mediaN>1?'s':''}/vídeo${mediaN>1?'s':''}`);
+  if(audioN)mem.push(`${audioN} áudio${audioN>1?'s':''}`);
+  if(mem.length)parts.push(`📸 ${mem.join(' e ')} guardado${(mediaN+audioN)>1?'s':''}`);
+  // dia mais ativo
+  const byDay={};items.forEach(e=>byDay[e.date]=(byDay[e.date]||0)+1);
+  const topDay=Object.entries(byDay).sort((a,b)=>b[1]-a[1])[0];
+  if(topDay&&topDay[1]>=3)parts.push(`O dia mais movimentado foi ${fmtShort(topDay[0])} (${topDay[1]} registros)`);
+
+  return parts.join('. ')+'.';
+}
+
+function card(e,q){
+  const t=themeOf(e.theme);
+  const scopeBadge=`<span class="scope-badge scope-${e.scope}">${e.scope==='dia'?'dia':'semana'}</span>`;
+  let media='';
+  if(e.media&&e.media.length){
+    media='<div class="media-grid">'+e.media.map((m,i)=>m.type.startsWith('video')
+      ? `<video data-eid="${e.id}" data-mi="${i}" src="${blobURL(m.blob)}" muted></video>`
+      : `<img data-eid="${e.id}" data-mi="${i}" src="${blobURL(m.blob)}">`).join('')+'</div>';
+  }
+  let audio='';
+  if(e.audio)audio=`<audio controls src="${blobURL(e.audio)}"></audio>`;
+  const hl=s=>q?escapeHtml(s).replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>'):escapeHtml(s);
+  let transcript=e.transcript?`<div class="transcript">🎙️ ${hl(e.transcript)}</div>`:'';
+  let text=e.text?`<div class="text">${hl(e.text)}</div>`:'';
+  let title=e.title?`<div class="entry-title">${hl(e.title)}</div>`:'';
+  return `<div class="entry">
+    <div class="top">
+      <div><div class="date">${fmtShort(e.date)}</div><div class="meta">${fmtDate(e.date)}${birth&&babyAge(e.date)?' · '+babyAge(e.date):''}</div></div>
+      <div style="text-align:right"><span class="theme-tag">${t.ic} ${t.label}</span><div style="margin-top:6px">${scopeBadge}</div></div>
+    </div>
+    ${title}${text}${audio}${transcript}${media}
+    <button class="del" onclick="removeEntry(${e.id})">excluir registro</button>
+  </div>`;
+}
+function escapeHtml(s){return s.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))}
+
+function bindMedia(){
+  document.querySelectorAll('.media-grid img,.media-grid video').forEach(el=>{
+    el.onclick=async()=>{const data=await allEntries();const e=data.find(x=>x.id==el.dataset.eid);const m=e.media[el.dataset.mi];openLightbox(m)};
+  });
+}
+function bindResumo(){
+  const seg=document.getElementById('regSeg');
+  if(seg)seg.querySelectorAll('button').forEach(b=>b.onclick=()=>{regMode=b.dataset.reg;render()});
+  const rseg=document.getElementById('resumoSeg');
+  if(rseg)rseg.querySelectorAll('button').forEach(b=>b.onclick=()=>{resumoMode=b.dataset.rm;render()});
+  document.querySelectorAll('.resumo-toggle').forEach(b=>b.onclick=()=>{
+    const el=document.getElementById('ri-'+b.dataset.key);
+    const open=el.style.display==='none';
+    el.style.display=open?'block':'none';
+    b.textContent=open?'ocultar registros ▴':'ver registros ▾';
+  });
+}
+function bindSearch(){
+  const box=document.getElementById('searchBox');
+  if(box){
+    box.oninput=e=>{
+      searchTerm=e.target.value;
+      clearTimeout(window._st);
+      window._st=setTimeout(()=>{
+        render();
+        const b=document.getElementById('searchBox');
+        if(b){b.focus();b.setSelectionRange(b.value.length,b.value.length)}
+      },350);
+    };
+  }
+}
+function bindFilters(){
+  const s=document.getElementById('tlSearch');
+  const p=document.getElementById('tlPeriod');
+  const t=document.getElementById('tlTheme');
+  if(p)p.onchange=e=>{tlPeriod=e.target.value;render()};
+  if(t)t.onchange=e=>{tlTheme=e.target.value;render()};
+  if(s)s.oninput=e=>{
+    tlSearch=e.target.value;
+    clearTimeout(window._tlst);
+    window._tlst=setTimeout(()=>{
+      render();
+      const b=document.getElementById('tlSearch');
+      if(b){b.focus();b.setSelectionRange(b.value.length,b.value.length)}
+    },350);
+  };
+}
+function clearFilters(){tlPeriod='all';tlTheme='all';tlSearch='';render()}
+function computeAgeUnits(){
+  // retorna {years,months,weeks,days} desde o nascimento até agora
+  const b=new Date(birth+'T00:00:00');
+  const now=new Date();
+  let months=(now.getFullYear()-b.getFullYear())*12+(now.getMonth()-b.getMonth());
+  let anchor=new Date(b.getFullYear(),b.getMonth()+months,b.getDate());
+  if(anchor>now){months--;anchor=new Date(b.getFullYear(),b.getMonth()+months,b.getDate());}
+  const remMs=now-anchor;
+  const remDaysTotal=Math.floor(remMs/864e5);
+  const weeks=Math.floor(remDaysTotal/7);
+  const days=remDaysTotal-weeks*7;
+  const years=Math.floor(months/12);
+  const remMonths=months%12;
+  return {years,months:remMonths,weeks,days,totalDays:Math.floor((now-b)/864e5)};
+}
+function updateAgeHero(){
+  const c=document.getElementById('ageClock');
+  if(!c)return;
+  if(!birth){c.style.display='none';return;}
+  c.style.display='flex';
+  const a=computeAgeUnits();
+  // revela progressivamente: só mostra unidades que já têm sentido
+  const units=[];
+  if(a.years>0)units.push(['ano'+(a.years>1?'s':''),a.years]);
+  if(a.years>0||a.months>0)units.push([a.months===1?'mês':'meses',a.months]);
+  if(a.years>0||a.months>0||a.weeks>0)units.push(['semana'+(a.weeks>1?'s':''),a.weeks]);
+  units.push(['dia'+(a.days!==1?'s':''),a.days]);
+  // recém-nascida
+  let inner;
+  if(a.totalDays===0){
+    inner=`<div class="age-unit"><div class="v">0</div><div class="u">dias</div></div>`;
+  }else{
+    inner=units.map(([u,v])=>`<div class="age-unit"><div class="v">${v}</div><div class="u">${u}</div></div>`).join('');
+  }
+  c.innerHTML=`<span class="party">🎉</span><div class="units">${inner}</div><span class="party">🎉</span>`;
+}
+// atualiza o relógio sozinho (à meia-noite a contagem de dias muda)
+setInterval(()=>{if(birth)updateAgeHero()},60000);
+
+/* ---------- Contador de idade (aba) ---------- */
+function bindAgeUnits(){
+  document.querySelectorAll('.age-units-pick button').forEach(b=>b.onclick=()=>{
+    ageUnit=b.dataset.au;
+    document.querySelectorAll('.age-units-pick button').forEach(x=>x.classList.toggle('on',x===b));
+    renderAgeCounter();
+  });
+}
+function renderAgeCounter(){
+  const el=document.getElementById('ageCounter');const det=document.getElementById('ageDetail');
+  if(!el||!birth)return;
+  const b=new Date(birth+'T00:00:00');
+  const now=new Date();
+  const ms=now-b;
+  const fmt=n=>n.toLocaleString('pt-BR');
+  let big,label;
+  switch(ageUnit){
+    case 'minutos': big=fmt(Math.floor(ms/60000)); label='minutos de vida'; break;
+    case 'horas': big=fmt(Math.floor(ms/36e5)); label='horas de vida'; break;
+    case 'dias': big=fmt(Math.floor(ms/864e5)); label='dias de vida'; break;
+    case 'semanas': big=fmt(Math.floor(ms/(7*864e5))); label='semanas de vida'; break;
+    case 'meses': {
+      let months=(now.getFullYear()-b.getFullYear())*12+(now.getMonth()-b.getMonth());
+      if(now.getDate()<b.getDate())months--;
+      big=fmt(Math.max(0,months)); label='meses de vida'; break;
+    }
+    case 'anos': {
+      let years=now.getFullYear()-b.getFullYear();
+      const had=(now.getMonth()>b.getMonth())||(now.getMonth()===b.getMonth()&&now.getDate()>=b.getDate());
+      if(!had)years--;
+      big=fmt(Math.max(0,years)); label='anos de vida'; break;
+    }
+  }
+  el.innerHTML=`<div class="ac-num">${big}</div><div class="ac-label">${label}</div>`;
+  // detalhe: idade completa por extenso
+  const a=computeAgeUnits();
+  const parts=[];
+  if(a.years>0)parts.push(`${a.years} ano${a.years>1?'s':''}`);
+  if(a.years>0||a.months>0)parts.push(`${a.months} ${a.months===1?'mês':'meses'}`);
+  if(a.years>0||a.months>0||a.weeks>0)parts.push(`${a.weeks} semana${a.weeks>1?'s':''}`);
+  parts.push(`${a.days} dia${a.days!==1?'s':''}`);
+  det.innerHTML=`🎉 ${parts.join(' · ')}<br><span style="font-size:12px;opacity:.8">nascida em ${fmtDMY(birth)}</span>`;
+}
+// ticker ao vivo quando a aba idade está aberta
+setInterval(()=>{if(view==='idade'&&birth&&(ageUnit==='minutos'||ageUnit==='horas'))renderAgeCounter()},1000);
+
+/* ---------- Lightbox ---------- */
+function openLightbox(m){
+  const lb=document.getElementById('lbContent');
+  lb.innerHTML=m.type.startsWith('video')?`<video controls autoplay src="${blobURL(m.blob)}"></video>`:`<img src="${blobURL(m.blob)}">`;
+  document.getElementById('lightbox').classList.add('show');
+}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('show');document.getElementById('lbContent').innerHTML=''}
+
+/* ---------- Sheet ---------- */
+function buildThemePick(){
+  const tp=document.getElementById('themePick');
+  tp.innerHTML=THEMES.map(t=>`<button data-t="${t.id}" class="${t.id===selTheme?'on':''}">${t.ic} ${t.label}</button>`).join('');
+  tp.querySelectorAll('button').forEach(b=>b.onclick=()=>{selTheme=b.dataset.t;buildThemePick()});
+}
+function openSheet(){
+  scope='dia';selTheme='marcos';pendingMedia=[];pendingAudio=null;
+  document.getElementById('fTitle').value='';
+  document.getElementById('fText').value='';
+  document.getElementById('fDate').value=new Date().toISOString().slice(0,10);
+  document.getElementById('mediaPreview').innerHTML='';
+  document.getElementById('audioPreview').innerHTML='';
+  document.querySelectorAll('#scopeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.scope==='dia'));
+  buildThemePick();resetRecBtn();
+  document.getElementById('overlay').classList.add('show');
+}
+function closeSheet(){document.getElementById('overlay').classList.remove('show');stopRec(true)}
+
+document.querySelectorAll('#scopeSeg button').forEach(b=>b.onclick=()=>{scope=b.dataset.scope;document.querySelectorAll('#scopeSeg button').forEach(x=>x.classList.toggle('on',x===b))});
+
+/* ---------- Media files ---------- */
+document.getElementById('fMedia').onchange=e=>{
+  [...e.target.files].forEach(f=>pendingMedia.push({type:f.type,blob:f}));
+  drawMediaPreview();e.target.value='';
+};
+function drawMediaPreview(){
+  const p=document.getElementById('mediaPreview');
+  p.innerHTML=pendingMedia.map((m,i)=>`<div class="chip">${m.type.startsWith('video')?`<video src="${blobURL(m.blob)}" muted></video>`:`<img src="${blobURL(m.blob)}">`}<button class="x" onclick="rmMedia(${i})">×</button></div>`).join('');
+}
+function rmMedia(i){pendingMedia.splice(i,1);drawMediaPreview()}
+
+/* ---------- Recording + transcription ---------- */
+function resetRecBtn(){
+  const p=document.getElementById('recBtnPlain'),t=document.getElementById('recBtnTrans');
+  p.className='rec-btn rec-start';p.textContent='🎙️ Só gravar áudio';p.style.display='';
+  t.className='rec-btn rec-transcribe';t.textContent='✍️ Gravar + transcrever';t.style.display='';
+  recording=false;
+}
+document.getElementById('recBtnPlain').onclick=()=>recording?stopRec():startRec(false);
+document.getElementById('recBtnTrans').onclick=()=>recording?stopRec():startRec(true);
+
+async function startRec(withTranscription){
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    mediaRec=new MediaRecorder(stream);audioChunks=[];
+    mediaRec.ondataavailable=e=>audioChunks.push(e.data);
+    mediaRec.onstop=()=>{pendingAudio=new Blob(audioChunks,{type:'audio/webm'});
+      document.getElementById('audioPreview').innerHTML=`<audio controls src="${blobURL(pendingAudio)}" style="width:100%;margin-top:8px"></audio>`;
+      stream.getTracks().forEach(t=>t.stop());};
+    mediaRec.start();
+    if(withTranscription){
+      const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+      if(SR){recognition=new SR();recognition.lang='pt-BR';recognition.continuous=true;recognition.interimResults=true;
+        let finalText=document.getElementById('fText').value;
+        recognition.onresult=ev=>{let interim='';for(let i=ev.resultIndex;i<ev.results.length;i++){const t=ev.results[i][0].transcript;if(ev.results[i].isFinal)finalText+=t+' ';else interim+=t;}document.getElementById('fText').value=(finalText+interim).trim();};
+        recognition.onerror=()=>{};recognition.start();
+      }else{document.getElementById('recNote').innerHTML='⚠️ Este navegador não transcreve automático. O áudio será salvo e você pode digitar o texto. Use o <b>Chrome</b> (PC ou Android) para transcrição automática.'}
+    }
+    // mostra só o botão ativo em modo "parar"
+    const active=withTranscription?document.getElementById('recBtnTrans'):document.getElementById('recBtnPlain');
+    const other=withTranscription?document.getElementById('recBtnPlain'):document.getElementById('recBtnTrans');
+    active.className='rec-btn rec-stop';active.textContent='⏹️ Parar gravação';
+    other.style.display='none';
+    recording=true;
+  }catch(err){
+    let msg='Não foi possível acessar o microfone.';
+    if(err&&err.name==='NotAllowedError')msg='Acesso ao microfone negado. Toque no cadeado 🔒 na barra de endereço → Permissões → Microfone → Permitir, e recarregue.';
+    else if(err&&err.name==='NotFoundError')msg='Nenhum microfone encontrado neste aparelho.';
+    else if(location.protocol!=='https:'&&location.protocol!=='file:')msg='O microfone só funciona com o site aberto pelo arquivo (file://) ou em HTTPS. Baixe o HTML e abra no Chrome.';
+    document.getElementById('recNote').innerHTML='⚠️ '+msg+'<br>Você pode digitar o registro normalmente abaixo.';
+    toast('Microfone bloqueado — veja a nota acima');
+    resetRecBtn();
+  }
+}
+function stopRec(silent){
+  if(mediaRec&&mediaRec.state!=='inactive')mediaRec.stop();
+  if(recognition){try{recognition.stop()}catch(e){}recognition=null}
+  resetRecBtn();
+}
+
+/* ---------- Save ---------- */
+async function saveEntry(){
+  const date=document.getElementById('fDate').value;
+  const text=document.getElementById('fText').value.trim();
+  const title=document.getElementById('fTitle').value.trim();
+  if(!date){toast('Escolha uma data');return}
+  if(recording)stopRec(true);
+  await new Promise(r=>setTimeout(r,250)); // deixa o blob de áudio fechar
+  const entry={
+    id:Date.now(),date,scope,theme:selTheme,title,text,
+    transcript: (pendingAudio&&text)?text:'',
+    audio:pendingAudio||null,
+    media:pendingMedia.map(m=>({type:m.type,blob:m.blob})),
+  };
+  // se há áudio, joga o texto pra transcrição; senão fica como texto livre
+  if(pendingAudio){entry.transcript=text;entry.text=''}
+  await putEntry(entry);
+  closeSheet();render();toast('Registro salvo 💛');
+}
+async function removeEntry(id){if(confirm('Excluir este registro? Não dá pra desfazer.')){await delEntry(id);render();toast('Registro excluído')}}
+
+/* ---------- Tabs ---------- */
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{
+  view=b.dataset.view;document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('active',x===b));render();
+});
+
+/* ---------- Name / birth ---------- */
+async function editName(){
+  const n=prompt('Nome da sua filha:',babyName==='minha filha'?'':babyName);
+  if(n!==null&&n.trim()){babyName=n.trim();await putMeta('name',babyName)}
+  const bd=prompt('Data de nascimento (AAAA-MM-DD), para mostrar a idade em cada registro:',birth||'');
+  if(bd!==null&&/^\d{4}-\d{2}-\d{2}$/.test(bd.trim())){birth=bd.trim();await putMeta('birth',birth)}
+  document.getElementById('babyName').textContent=babyName;render();
+}
+
+/* close overlay on backdrop */
+document.getElementById('overlay').onclick=e=>{if(e.target.id==='overlay')closeSheet()};
+document.getElementById('lightbox').onclick=e=>{if(e.target.id==='lightbox')closeLightbox()};
+
+/* ---------- Backup / Import ---------- */
+function blobToB64(blob){return new Promise(res=>{const r=new FileReader();r.onload=()=>res(r.result);r.readAsDataURL(blob)})}
+function b64ToBlob(dataUrl){const [head,b64]=dataUrl.split(',');const mime=head.match(/:(.*?);/)[1];const bin=atob(b64);const arr=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);return new Blob([arr],{type:mime})}
+
+async function buildBackupBlob(){
+  const data=await allEntries();
+  const out=[];
+  for(const e of data){
+    const o={id:e.id,date:e.date,scope:e.scope,theme:e.theme,title:e.title||'',text:e.text,transcript:e.transcript};
+    if(e.audio)o.audio=await blobToB64(e.audio);
+    if(e.media&&e.media.length){o.media=[];for(const m of e.media)o.media.push({type:m.type,data:await blobToB64(m.blob)})}
+    out.push(o);
+  }
+  const backup={app:'diario-filha',version:1,exportedAt:new Date().toISOString(),name:babyName,birth,entries:out};
+  return new Blob([JSON.stringify(backup)],{type:'application/json'});
+}
+function backupFilename(){return `backup-diario-${new Date().toISOString().slice(0,10)}.json`}
+
+async function exportData(){
+  toast('Preparando backup...');
+  const blob=await buildBackupBlob();
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=backupFilename();a.click();
+  toast('Backup salvo 💾');
+}
+function doBackup(){ if(driveHandle){saveToDrive()} else {exportData()} }
+function toggleSettings(){
+  const p=document.getElementById('settingsPanel');
+  p.classList.toggle('show');
+  if(p.classList.contains('show')){
+    renderSwatches();
+    const nf=document.getElementById('nameField');const bf=document.getElementById('birthField');
+    if(nf)nf.value=(babyName&&babyName!=='minha filha')?babyName:'';
+    if(bf){bf.value=birth||'';updateBirthPreview()}
+  }
+}
+function fmtDMY(iso){if(!iso)return'';const [y,m,d]=iso.split('-');return `${d}-${m}-${y}`}
+function updateBirthPreview(){
+  const bf=document.getElementById('birthField');const pv=document.getElementById('birthPreview');
+  if(!pv)return;
+  pv.textContent=bf.value?('📅 '+fmtDMY(bf.value)+' (dd-mm-aaaa)'):'';
+}
+async function saveProfile(){
+  const nf=document.getElementById('nameField');const bf=document.getElementById('birthField');
+  const n=nf.value.trim();const bd=bf.value;
+  if(n){babyName=n;await putMeta('name',babyName)}
+  else{babyName='minha filha';await putMeta('name',babyName)}
+  if(bd){birth=bd;await putMeta('birth',birth)}
+  document.getElementById('babyName').textContent=babyName;
+  updateAgeHero();render();
+  toast('Salvo 💛');
+}
+
+/* ---------- Pasta do Drive (File System Access API) ---------- */
+let driveHandle=null;
+async function refreshDriveUI(){
+  const supported='showDirectoryPicker' in window;
+  const row=document.getElementById('driveRow');
+  const st=document.getElementById('driveStatus');
+  if(!supported){
+    row.style.display='none';
+    st.textContent='ⓘ Salvar direto na pasta funciona no Chrome/Edge do computador. No celular, use o botão “Fazer backup”.';
+    return;
+  }
+  driveHandle=await getMeta('driveHandle');
+  if(driveHandle){
+    document.getElementById('connectDriveBtn').textContent='📁 Trocar pasta';
+    document.getElementById('saveDriveBtn').style.display='inline-block';
+    st.textContent='✅ Pasta conectada. Toque em “Salvar na pasta” para gravar o backup direto lá.';
+  }else{
+    document.getElementById('connectDriveBtn').textContent='📁 Conectar pasta do Drive';
+    document.getElementById('saveDriveBtn').style.display='none';
+    st.textContent='Escolha a pasta do Google Drive (sincronizada no PC) para salvar backups com um clique.';
+  }
+}
+async function connectDrive(){
+  if(!('showDirectoryPicker' in window)){toast('Recurso só no Chrome/Edge do PC');return}
+  try{
+    const handle=await window.showDirectoryPicker({mode:'readwrite'});
+    driveHandle=handle;
+    await putMeta('driveHandle',handle);
+    toast('Pasta conectada 📁');
+    refreshDriveUI();
+  }catch(err){/* usuário cancelou */}
+}
+async function ensurePermission(handle){
+  const opts={mode:'readwrite'};
+  if((await handle.queryPermission(opts))==='granted')return true;
+  if((await handle.requestPermission(opts))==='granted')return true;
+  return false;
+}
+async function saveToDrive(silent){
+  if(!driveHandle){if(!silent)toast('Conecte uma pasta primeiro');return false}
+  try{
+    if(!await ensurePermission(driveHandle)){if(!silent)toast('Permissão da pasta negada');return false}
+    const blob=await buildBackupBlob();
+    const fileHandle=await driveHandle.getFileHandle(backupFilename(),{create:true});
+    const w=await fileHandle.createWritable();
+    await w.write(blob);await w.close();
+    if(!silent)toast('Backup salvo na pasta 💾');
+    await putMeta('lastDriveBackup',new Date().toISOString().slice(0,10));
+    return true;
+  }catch(err){if(!silent)toast('Não foi possível salvar na pasta');return false}
+}
+
+document.getElementById('importFile').onchange=async e=>{
+  const file=e.target.files[0];if(!file)return;
+  if(!confirm('Importar este backup? Os registros serão somados aos atuais.')){e.target.value='';return}
+  try{
+    const backup=JSON.parse(await file.text());
+    if(backup.name){babyName=backup.name;await putMeta('name',babyName)}
+    if(backup.birth){birth=backup.birth;await putMeta('birth',birth)}
+    for(const o of backup.entries){
+      const entry={id:o.id||Date.now()+Math.random(),date:o.date,scope:o.scope,theme:o.theme,title:o.title||'',text:o.text||'',transcript:o.transcript||'',audio:o.audio?b64ToBlob(o.audio):null,media:(o.media||[]).map(m=>({type:m.type,blob:b64ToBlob(m.data)}))};
+      await putEntry(entry);
+    }
+    document.getElementById('babyName').textContent=babyName;
+    render();toast('Backup importado 🎉');
+  }catch(err){toast('Arquivo inválido')}
+  e.target.value='';
+};
+
+/* ---------- Init ---------- */
+(async()=>{
+  await openDB();
+  babyName=await getMeta('name')||'minha filha';
+  birth=await getMeta('birth')||null;
+  currentPalette=await getMeta('palette')||'rosa';
+  applyPalette(currentPalette);
+  document.getElementById('babyName').textContent=babyName;
+  render();
+  await refreshDriveUI();
+  // backup diário semi-automático: se já tem pasta e ainda não salvou hoje, oferece
+  if(driveHandle){
+    const last=await getMeta('lastDriveBackup');
+    const today=new Date().toISOString().slice(0,10);
+    const hasEntries=(await allEntries()).length>0;
+    if(hasEntries&&last!==today){
+      setTimeout(async()=>{
+        if(confirm('Salvar o backup de hoje na pasta do Drive agora?')){
+          if(await saveToDrive(true))toast('Backup de hoje salvo no Drive 💾');
+        }
+      },800);
+    }
+  }
+})();
 </script>
 </body>
 </html>
