@@ -250,11 +250,13 @@
   .info-card-content{font-size:14.5px;line-height:1.55;margin-top:8px;white-space:pre-wrap;word-break:break-word;color:var(--ink)}
   .info-card-actions{display:flex;gap:14px;margin-top:12px}
   .info-card-actions button{background:none;border:none;color:var(--ink-soft);font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Nunito Sans'}
-  .info-colors{display:flex;gap:10px;flex-wrap:wrap}
-  .ic-swatch{width:38px;height:38px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:.2s}
+  .info-colors{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .ic-swatch{width:38px;height:38px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:.2s;padding:0;flex:0 0 auto;box-sizing:border-box;vertical-align:middle}
   .ic-swatch.on{border-color:var(--ink);transform:scale(1.08)}
-  .ic-custom{width:38px;height:38px;border-radius:50%;border:3px solid transparent;cursor:pointer;overflow:hidden;display:inline-block;position:relative}
+  .ic-custom{width:38px;height:38px;border-radius:50%;border:3px solid var(--line);cursor:pointer;overflow:hidden;position:relative;flex:0 0 auto;box-sizing:border-box;background:#fff;display:flex;align-items:center;justify-content:center;vertical-align:middle}
   .ic-custom.on{border-color:var(--ink);transform:scale(1.08)}
+  .ic-plus{font-size:20px;font-weight:700;color:var(--ink-soft);line-height:1;pointer-events:none;display:block;margin-top:-2px}
+  .ic-custom input[type=color]{position:absolute;inset:0;width:100%;height:100%;border:none;padding:0;margin:0;opacity:0;cursor:pointer}
 </style>
 </head>
 <body>
@@ -924,17 +926,7 @@ async function startRec(mode){
   const wantsAudio=(mode==='plain'||mode==='both');
   const wantsTranscription=(mode==='both'||mode==='only');
   try{
-    // No modo "só transcrever" NÃO abrimos o microfone nós mesmos —
-    // deixamos o reconhecimento de voz controlá-lo (essencial no Android).
-    if(wantsAudio){
-      const stream=await navigator.mediaDevices.getUserMedia({audio:true});
-      mediaRec=new MediaRecorder(stream);audioChunks=[];
-      mediaRec.ondataavailable=e=>audioChunks.push(e.data);
-      mediaRec.onstop=()=>{pendingAudio=new Blob(audioChunks,{type:'audio/webm'});
-        document.getElementById('audioPreview').innerHTML=`<audio controls src="${blobURL(pendingAudio)}" style="width:100%;margin-top:8px"></audio>`;
-        stream.getTracks().forEach(t=>t.stop());};
-      mediaRec.start();
-    }
+    // 1) Inicia a TRANSCRIÇÃO primeiro (no Android ela precisa do microfone).
     transcriptActive=wantsTranscription;
     if(wantsTranscription){
       const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -944,6 +936,23 @@ async function startRec(mode){
         document.getElementById('recNote').innerHTML='🔴 <b>Ouvindo...</b> fale normalmente. O texto aparece abaixo.';
       }else{
         document.getElementById('recNote').innerHTML='⚠️ Este navegador não transcreve. Use o <b>Chrome</b>.';
+      }
+    }
+    // 2) Tenta gravar o áudio. Se falhar (conflito de microfone no Android),
+    // NÃO interrompe a transcrição — só avisa que o áudio não pôde ser gravado.
+    if(wantsAudio){
+      try{
+        const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+        mediaRec=new MediaRecorder(stream);audioChunks=[];
+        mediaRec.ondataavailable=e=>audioChunks.push(e.data);
+        mediaRec.onstop=()=>{pendingAudio=new Blob(audioChunks,{type:'audio/webm'});
+          document.getElementById('audioPreview').innerHTML=`<audio controls src="${blobURL(pendingAudio)}" style="width:100%;margin-top:8px"></audio>`;
+          stream.getTracks().forEach(t=>t.stop());};
+        mediaRec.start();
+      }catch(audioErr){
+        if(mode==='plain'){throw audioErr;} // sem transcrição, o áudio é essencial
+        // modo both no celular: mantém só a transcrição
+        document.getElementById('recNote').innerHTML='🔴 <b>Ouvindo...</b> (neste aparelho o áudio não pôde ser gravado junto — a transcrição segue funcionando).';
       }
     }
     const ids={plain:'recBtnPlain',both:'recBtnTrans',only:'recBtnOnly'};
@@ -967,8 +976,6 @@ function startRecognition(SR){
   recognition.lang='pt-BR';
   recognition.continuous=true;
   recognition.interimResults=true;
-  // sessionFinal: texto final acumulado SÓ desta sessão de reconhecimento.
-  // finalTranscript: texto consolidado de sessões anteriores.
   let sessionFinal='';
   recognition.onresult=ev=>{
     gotSpeech=true;
@@ -979,7 +986,7 @@ function startRecognition(SR){
       if(ev.results[i].isFinal)sessionFinal+=t+' ';
       else interim+=t;
     }
-    document.getElementById('fText').value=(finalTranscript+sessionFinal+interim).trim();
+    document.getElementById('fText').value=dedupeText((finalTranscript+sessionFinal+interim).trim());
   };
   recognition.onerror=ev=>{
     if(ev.error==='not-allowed'||ev.error==='service-not-allowed'){
@@ -989,13 +996,9 @@ function startRecognition(SR){
       document.getElementById('recNote').innerHTML='⚠️ Português não disponível para transcrição neste aparelho. Verifique a “Entrada por voz do Google” nas configurações.';
       transcriptActive=false;
     }
-    // 'no-speech' e 'aborted' são normais no Android: o onend reinicia
   };
-  // AUTO-RESTART: no Android o reconhecimento para sozinho.
-  // Ao terminar a sessão, consolida o texto final dela em finalTranscript
-  // (evita duplicação) e reinicia uma sessão limpa.
   recognition.onend=()=>{
-    if(sessionFinal){finalTranscript+=sessionFinal;sessionFinal='';}
+    if(sessionFinal){finalTranscript=dedupeText((finalTranscript+sessionFinal).trim())+' ';sessionFinal='';}
     if(transcriptActive&&recording){
       try{recognition.start()}catch(e){setTimeout(()=>{if(transcriptActive&&recording)try{recognition.start()}catch(_){}}, 300)}
     }
@@ -1022,9 +1025,54 @@ function stopRec(silent){
 }
 
 /* ---------- Deixar o texto coeso ---------- */
+function dedupeText(s){
+  if(!s)return s;
+  let words=s.split(/\s+/).filter(Boolean);
+  // 1) remove repetição imediata de 1 palavra
+  let out=[];
+  for(let i=0;i<words.length;i++){
+    if(i>0&&words[i].toLowerCase().replace(/[.,!?;:]/g,'')===words[i-1].toLowerCase().replace(/[.,!?;:]/g,''))continue;
+    out.push(words[i]);
+  }
+  // 2) remove qualquer bloco de 2..8 palavras imediatamente repetido,
+  // varrendo todas as posições e repetindo até estabilizar
+  let changed=true,guard=0;
+  while(changed&&guard++<20){
+    changed=false;
+    for(let n=8;n>=2;n--){
+      for(let i=0;i+2*n<=out.length;i++){
+        const a=out.slice(i,i+n).join(' ').toLowerCase();
+        const b=out.slice(i+n,i+2*n).join(' ').toLowerCase();
+        if(a&&a===b){out.splice(i+n,n);changed=true;i--;}
+      }
+    }
+  }
+  return out.join(' ');
+}
 function tidyText(raw){
-  let t=raw.replace(/\s+/g,' ').trim();
+  let t=dedupeText(raw.replace(/\s+/g,' ').trim());
   if(!t)return t;
+
+  // 0) Correções comuns de escrita/acentuação (lista de trocas frequentes).
+  // Observação: não é correção ortográfica completa — apenas erros comuns.
+  const FIXES=[
+    [/\bvc\b/gi,'você'],[/\btb\b/gi,'também'],[/\btbm\b/gi,'também'],
+    [/\bpq\b/gi,'porque'],[/\bq\b/gi,'que'],[/\bqdo\b/gi,'quando'],
+    [/\bhj\b/gi,'hoje'],[/\bdps\b/gi,'depois'],[/\bmsm\b/gi,'mesmo'],
+    [/\bnao\b/gi,'não'],[/\bmae\b/gi,'mãe'],[/\bpai\b/g,'pai'],
+    [/\bbebe\b/gi,'bebê'],[/\bvovo\b/gi,'vovó'],[/\bvovô\b/g,'vovô'],
+    [/\bamamentaçao\b/gi,'amamentação'],[/\bconsulta\b/gi,'consulta'],
+    [/\bpediatra\b/gi,'pediatra'],[/\bsorisso\b/gi,'sorriso'],
+    [/\bdesemvolvimento\b/gi,'desenvolvimento'],[/\bcrescimeto\b/gi,'crescimento'],
+    [/\bprimera\b/gi,'primeira'],[/\bprimero\b/gi,'primeiro'],
+    [/\bfralda\b/gi,'fralda'],[/\bmamadeira\b/gi,'mamadeira'],
+    [/\bseta\b(?=\s)/gi,'senta'],
+  ];
+  FIXES.forEach(([re,rep])=>{t=t.replace(re,m=>{
+    // preserva maiúscula inicial se a palavra original começava com maiúscula
+    const out=rep;
+    return /^[A-ZÀ-Ý]/.test(m)?out.charAt(0).toUpperCase()+out.slice(1):out;
+  })});
 
   // 1) Converte pontuação DITADA em voz para símbolos
   // (ex.: "ponto de exclamação", "vírgula", "interrogação")
@@ -1296,8 +1344,9 @@ function buildInfoColors(){
   const presets=INFO_COLORS.map(col=>`<button class="ic-swatch ${col.id===selInfoColor?'on':''}" data-c="${col.id}" style="background:${col.c}" title="${col.nm}"></button>`).join('');
   const customVal=isCustom?selInfoColor:'#c06b6b';
   c.innerHTML=`${presets}
-    <label class="ic-custom ${isCustom?'on':''}" title="Cor personalizada" style="background:${isCustom?selInfoColor:'conic-gradient(red,orange,yellow,green,blue,violet,red)'}">
-      <input type="color" id="icCustom" value="${customVal}" style="opacity:0;width:100%;height:100%;cursor:pointer">
+    <label class="ic-custom ${isCustom?'on':''}" title="Personalizar cor" style="background:${isCustom?selInfoColor:'#fff'}">
+      ${isCustom?'':'<span class="ic-plus">+</span>'}
+      <input type="color" id="icCustom" value="${customVal}">
     </label>`;
   c.querySelectorAll('.ic-swatch').forEach(b=>b.onclick=()=>{selInfoColor=b.dataset.c;buildInfoColors()});
   const custom=document.getElementById('icCustom');
