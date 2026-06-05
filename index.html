@@ -179,6 +179,7 @@
   .rec-btn{flex:1;border:none;border-radius:14px;padding:13px 10px;font-weight:700;font-size:13.5px;cursor:pointer;font-family:'Nunito Sans';display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;line-height:1.2}
   .rec-start{background:var(--sage);color:#fff}
   .rec-transcribe{background:var(--terra);color:#fff}
+  .rec-onlytrans{background:var(--sage);color:#fff}
   .tidy-btn{margin-top:8px;background:none;border:1px solid var(--line);color:var(--rose-deep);font-weight:700;font-size:13px;padding:9px 14px;border-radius:12px;cursor:pointer;font-family:'Nunito Sans';width:100%}
   .rec-stop{background:var(--rose-deep);color:#fff;animation:pulse 1.2s infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
@@ -218,16 +219,36 @@
   mark{background:#ffe7a8;color:var(--ink);border-radius:4px;padding:0 2px}
   .filter-box{background:var(--bg-card);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:14px;box-shadow:var(--shadow)}
   .filter-box input[type=text]{margin-bottom:8px}
+  .filter-custom{display:flex;gap:8px;margin-top:8px}
+  .filter-custom>div{flex:1}
+  .filter-custom .fc-lab{display:block;font-size:11px;font-weight:700;color:var(--ink-soft);margin-bottom:3px}
+  .filter-custom input[type=date]{width:100%;font-size:13px}
+  .fc-hint{font-size:11px;color:var(--ink-soft);margin-top:6px}
   .filter-row{display:flex;gap:8px}
   .filter-row select{flex:1;min-width:0}
   .filter-clear{margin-top:10px;background:var(--cream);border:none;color:var(--ink);font-weight:700;font-size:12.5px;padding:7px 14px;border-radius:999px;cursor:pointer;font-family:'Nunito Sans'}
-  .age-units-pick{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
-  .age-units-pick button{border:1px solid var(--line);background:var(--bg-card);color:var(--ink-soft);padding:9px 16px;border-radius:999px;font-size:14px;font-weight:700;font-family:'Nunito Sans';cursor:pointer;transition:.2s}
-  .age-units-pick button.on{background:var(--rose-deep);color:#fff;border-color:var(--rose-deep);box-shadow:var(--shadow)}
-  .age-counter{background:linear-gradient(135deg,var(--rose-deep),var(--terra));color:#fff;border-radius:24px;padding:36px 20px;text-align:center;box-shadow:var(--shadow-lg);margin-bottom:16px}
-  .age-counter .ac-num{font-family:'Fraunces';font-size:52px;font-weight:700;line-height:1;word-break:break-word}
-  .age-counter .ac-label{font-size:15px;font-weight:700;opacity:.9;margin-top:8px;text-transform:uppercase;letter-spacing:1px}
-  .age-detail{text-align:center;font-family:'Fraunces';font-size:17px;font-weight:600;color:var(--ink);line-height:1.5}
+  .age-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .age-card{background:linear-gradient(135deg,var(--rose-deep),var(--terra));color:#fff;border-radius:20px;padding:22px 14px;text-align:center;box-shadow:var(--shadow-lg)}
+  .age-card .ac-ic{font-size:26px;line-height:1;margin-bottom:6px}
+  .age-card .ac-num{font-family:'Fraunces';font-size:38px;font-weight:700;line-height:1;word-break:break-word}
+  .age-card .ac-label{font-size:13px;font-weight:700;opacity:.92;margin-top:6px;text-transform:uppercase;letter-spacing:1px}
+  .age-detail{text-align:center}
+  .age-detail .age-extenso{font-family:'Fraunces';font-size:18px;font-weight:600;color:var(--rose-deep);line-height:1.4}
+  /* informações */
+  .info-add-btn{width:100%;background:var(--rose-deep);color:#fff;border:none;border-radius:14px;padding:13px;font-size:15px;font-weight:700;font-family:'Nunito Sans';cursor:pointer;margin-bottom:16px;box-shadow:var(--shadow)}
+  .info-list{display:flex;flex-direction:column;gap:12px}
+  .info-card{background:var(--bg-card);border:1px solid var(--line);border-left:5px solid var(--rose-deep);border-radius:16px;padding:15px;box-shadow:var(--shadow);animation:rise .3s ease both}
+  .info-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .info-card-title{font-family:'Fraunces';font-size:17px;font-weight:600;line-height:1.25}
+  .info-reorder{display:flex;flex-direction:column;gap:3px;flex:0 0 auto}
+  .info-reorder button{background:var(--cream);border:none;border-radius:7px;width:30px;height:24px;font-size:11px;cursor:pointer;color:var(--ink)}
+  .info-reorder button:disabled{opacity:.3;cursor:default}
+  .info-card-content{font-size:14.5px;line-height:1.55;margin-top:8px;white-space:pre-wrap;word-break:break-word;color:var(--ink)}
+  .info-card-actions{display:flex;gap:14px;margin-top:12px}
+  .info-card-actions button{background:none;border:none;color:var(--ink-soft);font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Nunito Sans'}
+  .info-colors{display:flex;gap:10px;flex-wrap:wrap}
+  .ic-swatch{width:38px;height:38px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:.2s}
+  .ic-swatch.on{border-color:var(--ink);transform:scale(1.08)}
 </style>
 </head>
 <body>
@@ -264,6 +285,7 @@
   <button data-view="resumo">📊 Resumo</button>
   <button data-view="busca">🔍 Buscar</button>
   <button data-view="idade">🎂 Idade</button>
+  <button data-view="info">📌 Informações</button>
 </nav>
 
 <div class="wrap" id="content"></div>
@@ -293,10 +315,13 @@
 
     <label>Áudio</label>
     <div class="rec-row">
-      <button class="rec-btn rec-start" id="recBtnPlain">🎙️ Só gravar áudio</button>
+      <button class="rec-btn rec-start" id="recBtnPlain">🎙️ Só gravar</button>
       <button class="rec-btn rec-transcribe" id="recBtnTrans">✍️ Gravar + transcrever</button>
     </div>
-    <div class="rec-note" id="recNote">“Gravar + transcrever” converte sua fala em texto na hora (só no Chrome do PC/Android, com microfone permitido). “Só gravar” salva o áudio sem texto.</div>
+    <div class="rec-row" style="margin-top:8px">
+      <button class="rec-btn rec-onlytrans" id="recBtnOnly">📝 Só transcrever (sem áudio)</button>
+    </div>
+    <div class="rec-note" id="recNote">No <b>celular</b>, use “Só transcrever” (texto sem salvar áudio) — funciona melhor no Android. No <b>computador</b>, “Gravar + transcrever” faz os dois. Tudo só no Chrome, com microfone permitido.</div>
     <div id="audioPreview"></div>
 
     <label>Texto / transcrição <span style="font-weight:400">(pode editar)</span></label>
@@ -315,19 +340,38 @@
 </div>
 
 <div class="lightbox" id="lightbox"><button class="close" onclick="closeLightbox()">×</button><div id="lbContent"></div></div>
+
+<div class="overlay" id="infoOverlay">
+  <div class="sheet">
+    <div class="grab"></div>
+    <h2 id="infoSheetTitle">Nova informação</h2>
+    <label>Título</label>
+    <input type="text" id="iTitle" placeholder="Ex.: Hospital de nascimento">
+    <label>Conteúdo</label>
+    <textarea id="iContent" placeholder="Ex.: Hospital Santa Maria, Dr. João..."></textarea>
+    <label>Cor / categoria</label>
+    <div class="info-colors" id="infoColors"></div>
+    <div class="savebar">
+      <button class="cancel" onclick="closeInfoSheet()">Cancelar</button>
+      <button class="save" onclick="saveInfo()">Salvar</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 /* ---------- IndexedDB setup ---------- */
 let db;
-const DBNAME='diarioFilha', STORE='entries', META='meta';
+const DBNAME='diarioFilha', STORE='entries', META='meta', INFO='info';
 function openDB(){
   return new Promise((res,rej)=>{
-    const r=indexedDB.open(DBNAME,1);
+    const r=indexedDB.open(DBNAME,2);
     r.onupgradeneeded=e=>{
       const d=e.target.result;
       if(!d.objectStoreNames.contains(STORE)) d.createObjectStore(STORE,{keyPath:'id'});
       if(!d.objectStoreNames.contains(META)) d.createObjectStore(META,{keyPath:'key'});
+      if(!d.objectStoreNames.contains(INFO)) d.createObjectStore(INFO,{keyPath:'id'});
     };
     r.onsuccess=e=>{db=e.target.result;res()};
     r.onerror=e=>rej(e);
@@ -337,6 +381,9 @@ function tx(store,mode){return db.transaction(store,mode).objectStore(store)}
 function putEntry(o){return new Promise(r=>{tx(STORE,'readwrite').put(o).onsuccess=()=>r()})}
 function delEntry(id){return new Promise(r=>{tx(STORE,'readwrite').delete(id).onsuccess=()=>r()})}
 function allEntries(){return new Promise(r=>{tx(STORE,'readonly').getAll().onsuccess=e=>r(e.target.result)})}
+function putInfo(o){return new Promise(r=>{tx(INFO,'readwrite').put(o).onsuccess=()=>r()})}
+function delInfo(id){return new Promise(r=>{tx(INFO,'readwrite').delete(id).onsuccess=()=>r()})}
+function allInfo(){return new Promise(r=>{tx(INFO,'readonly').getAll().onsuccess=e=>r(e.target.result)})}
 function putMeta(k,v){return new Promise(r=>{tx(META,'readwrite').put({key:k,value:v}).onsuccess=()=>r()})}
 function getMeta(k){return new Promise(r=>{tx(META,'readonly').get(k).onsuccess=e=>r(e.target.result?e.target.result.value:null)})}
 
@@ -393,11 +440,11 @@ let view='registros', scope='dia', selTheme='marcos';
 let regMode='dia';
 let resumoMode='semana', searchTerm='';
 let tlPeriod='all', tlTheme='all', tlSearch='';
-let ageUnit='dias';
+let tlStart='', tlEnd='';
 let pendingMedia=[]; // {type,blob}
 let pendingAudio=null;
 let recognition=null, mediaRec=null, audioChunks=[], recording=false;
-let transcriptActive=false, finalTranscript='';
+let transcriptActive=false, finalTranscript='', recStream=null;
 let babyName='minha filha', birth=null;
 
 /* ---------- Utils ---------- */
@@ -478,17 +525,25 @@ async function render(){
           <option value="30" ${tlPeriod==='30'?'selected':''}>Últimos 30 dias</option>
           <option value="90" ${tlPeriod==='90'?'selected':''}>Últimos 3 meses</option>
           <option value="365" ${tlPeriod==='365'?'selected':''}>Último ano</option>
+          <option value="custom" ${tlPeriod==='custom'?'selected':''}>📅 Período personalizado</option>
         </select>
         <select id="tlTheme">
           <option value="all" ${tlTheme==='all'?'selected':''}>Todos os temas</option>
           ${themeOpts}
         </select>
       </div>
+      ${tlPeriod==='custom'?`<div class="filter-custom">
+        <div><label class="fc-lab">De</label><input type="date" id="tlStart" value="${escapeAttr(tlStart)}"></div>
+        <div><label class="fc-lab">Até</label><input type="date" id="tlEnd" value="${escapeAttr(tlEnd)}"></div>
+      </div><div class="fc-hint">Deixe um dos campos vazio para “a partir de” ou “até” uma data.</div>`:''}
       ${(tlSearch||tlPeriod!=='all'||tlTheme!=='all')?`<button class="filter-clear" onclick="clearFilters()">✕ limpar filtros</button>`:''}
     </div>`;
     // aplica filtros
     let filtered=data.slice();
-    if(tlPeriod!=='all'){const cutoff=new Date();cutoff.setDate(cutoff.getDate()-parseInt(tlPeriod));const cs=cutoff.toISOString().slice(0,10);filtered=filtered.filter(e=>e.date>=cs)}
+    if(tlPeriod==='custom'){
+      if(tlStart)filtered=filtered.filter(e=>e.date>=tlStart);
+      if(tlEnd)filtered=filtered.filter(e=>e.date<=tlEnd);
+    }else if(tlPeriod!=='all'){const cutoff=new Date();cutoff.setDate(cutoff.getDate()-parseInt(tlPeriod));const cs=cutoff.toISOString().slice(0,10);filtered=filtered.filter(e=>e.date>=cs)}
     if(tlTheme!=='all')filtered=filtered.filter(e=>e.theme===tlTheme);
     const q=tlSearch.trim().toLowerCase();
     if(q)filtered=filtered.filter(e=>((e.title||'')+' '+(e.text||'')+' '+(e.transcript||'')).toLowerCase().includes(q));
@@ -555,16 +610,20 @@ async function render(){
     if(!birth){
       html+=`<div class="empty"><span class="big">🎂</span>Defina a data de nascimento em ⚙️ ajustes para ver o contador.</div>`;
     }else{
-      html+=`<div class="section-sub">Escolha como quer ver a idade.</div>`;
-      const opts=[['anos','Anos'],['meses','Meses'],['semanas','Semanas'],['dias','Dias'],['horas','Horas'],['minutos','Minutos']];
-      html+=`<div class="age-units-pick">${opts.map(([v,l])=>`<button class="${ageUnit===v?'on':''}" data-au="${v}">${l}</button>`).join('')}</div>`;
-      html+=`<div class="age-counter" id="ageCounter"></div>`;
-      html+=`<div class="age-detail" id="ageDetail"></div>`;
+      html+=`<div class="section-sub">Quanto tempo de vida em cada unidade.</div>`;
+      html+=`<div class="age-detail" id="ageDetail" style="margin-bottom:18px"></div>`;
+      html+=`<div class="age-grid" id="ageGrid"></div>`;
     }
+  }
+  else if(view==='info'){
+    html+=`<div class="section-title">Informações</div><div class="section-sub">Dados importantes, organizados do seu jeito.</div>`;
+    html+=`<button class="info-add-btn" onclick="openInfoSheet()">＋ Adicionar informação</button>`;
+    html+=`<div id="infoList" class="info-list"></div>`;
   }
   c.innerHTML=html;
   bindMedia();
-  if(view==='idade'&&birth){bindAgeUnits();renderAgeCounter();}
+  if(view==='idade'&&birth){renderAgeCounter();}
+  if(view==='info'){renderInfoList();}
   bindResumo();
   bindSearch();
   bindFilters();
@@ -679,8 +738,12 @@ function bindFilters(){
   const s=document.getElementById('tlSearch');
   const p=document.getElementById('tlPeriod');
   const t=document.getElementById('tlTheme');
+  const st=document.getElementById('tlStart');
+  const en=document.getElementById('tlEnd');
   if(p)p.onchange=e=>{tlPeriod=e.target.value;render()};
   if(t)t.onchange=e=>{tlTheme=e.target.value;render()};
+  if(st)st.onchange=e=>{tlStart=e.target.value;render()};
+  if(en)en.onchange=e=>{tlEnd=e.target.value;render()};
   if(s)s.oninput=e=>{
     tlSearch=e.target.value;
     clearTimeout(window._tlst);
@@ -691,7 +754,7 @@ function bindFilters(){
     },350);
   };
 }
-function clearFilters(){tlPeriod='all';tlTheme='all';tlSearch='';render()}
+function clearFilters(){tlPeriod='all';tlTheme='all';tlSearch='';tlStart='';tlEnd='';render()}
 function computeAgeUnits(){
   // retorna {years,months,weeks,days} desde o nascimento até agora
   const b=new Date(birth+'T00:00:00');
@@ -732,39 +795,34 @@ function updateAgeHero(){
 setInterval(()=>{if(birth)updateAgeHero()},60000);
 
 /* ---------- Contador de idade (aba) ---------- */
-function bindAgeUnits(){
-  document.querySelectorAll('.age-units-pick button').forEach(b=>b.onclick=()=>{
-    ageUnit=b.dataset.au;
-    document.querySelectorAll('.age-units-pick button').forEach(x=>x.classList.toggle('on',x===b));
-    renderAgeCounter();
-  });
-}
 function renderAgeCounter(){
-  const el=document.getElementById('ageCounter');const det=document.getElementById('ageDetail');
-  if(!el||!birth)return;
+  const grid=document.getElementById('ageGrid');const det=document.getElementById('ageDetail');
+  if(!grid||!birth)return;
   const b=new Date(birth+'T00:00:00');
   const now=new Date();
   const ms=now-b;
   const fmt=n=>n.toLocaleString('pt-BR');
-  let big,label;
-  switch(ageUnit){
-    case 'minutos': big=fmt(Math.floor(ms/60000)); label='minutos de vida'; break;
-    case 'horas': big=fmt(Math.floor(ms/36e5)); label='horas de vida'; break;
-    case 'dias': big=fmt(Math.floor(ms/864e5)); label='dias de vida'; break;
-    case 'semanas': big=fmt(Math.floor(ms/(7*864e5))); label='semanas de vida'; break;
-    case 'meses': {
-      let months=(now.getFullYear()-b.getFullYear())*12+(now.getMonth()-b.getMonth());
-      if(now.getDate()<b.getDate())months--;
-      big=fmt(Math.max(0,months)); label='meses de vida'; break;
-    }
-    case 'anos': {
-      let years=now.getFullYear()-b.getFullYear();
-      const had=(now.getMonth()>b.getMonth())||(now.getMonth()===b.getMonth()&&now.getDate()>=b.getDate());
-      if(!had)years--;
-      big=fmt(Math.max(0,years)); label='anos de vida'; break;
-    }
-  }
-  el.innerHTML=`<div class="ac-num">${big}</div><div class="ac-label">${label}</div>`;
+  const days=Math.floor(ms/864e5);
+  const weeks=Math.floor(ms/(7*864e5));
+  let months=(now.getFullYear()-b.getFullYear())*12+(now.getMonth()-b.getMonth());
+  if(now.getDate()<b.getDate())months--;
+  months=Math.max(0,months);
+  let years=now.getFullYear()-b.getFullYear();
+  const hadBday=(now.getMonth()>b.getMonth())||(now.getMonth()===b.getMonth()&&now.getDate()>=b.getDate());
+  if(!hadBday)years--;
+  years=Math.max(0,years);
+  const cards=[
+    ['📅','dias',days],
+    ['🗓️','semanas',weeks],
+    ['🌙','meses',months],
+    ['🎂','anos',years],
+  ];
+  grid.innerHTML=cards.map(([ic,label,val])=>`
+    <div class="age-card">
+      <div class="ac-ic">${ic}</div>
+      <div class="ac-num">${fmt(val)}</div>
+      <div class="ac-label">${label}</div>
+    </div>`).join('');
   // detalhe: idade completa por extenso
   const a=computeAgeUnits();
   const parts=[];
@@ -772,10 +830,9 @@ function renderAgeCounter(){
   if(a.years>0||a.months>0)parts.push(`${a.months} ${a.months===1?'mês':'meses'}`);
   if(a.years>0||a.months>0||a.weeks>0)parts.push(`${a.weeks} semana${a.weeks>1?'s':''}`);
   parts.push(`${a.days} dia${a.days!==1?'s':''}`);
-  det.innerHTML=`🎉 ${parts.join(' · ')}<br><span style="font-size:12px;opacity:.8">nascida em ${fmtDMY(birth)}</span>`;
+  det.innerHTML=`<div class="age-extenso">🎉 ${parts.join(' · ')}</div><div style="font-size:12.5px;color:var(--ink-soft);margin-top:4px">nascida em ${fmtDMY(birth)}</div>`;
 }
-// ticker ao vivo quando a aba idade está aberta
-setInterval(()=>{if(view==='idade'&&birth&&(ageUnit==='minutos'||ageUnit==='horas'))renderAgeCounter()},1000);
+setInterval(()=>{if(view==='idade'&&birth&&document.getElementById('ageGrid'))renderAgeCounter()},30000);
 
 /* ---------- Lightbox ---------- */
 function openLightbox(m){
@@ -819,38 +876,48 @@ function rmMedia(i){pendingMedia.splice(i,1);drawMediaPreview()}
 
 /* ---------- Recording + transcription ---------- */
 function resetRecBtn(){
-  const p=document.getElementById('recBtnPlain'),t=document.getElementById('recBtnTrans');
-  p.className='rec-btn rec-start';p.textContent='🎙️ Só gravar áudio';p.style.display='';
+  const p=document.getElementById('recBtnPlain'),t=document.getElementById('recBtnTrans'),o=document.getElementById('recBtnOnly');
+  p.className='rec-btn rec-start';p.textContent='🎙️ Só gravar';p.style.display='';
   t.className='rec-btn rec-transcribe';t.textContent='✍️ Gravar + transcrever';t.style.display='';
+  o.className='rec-btn rec-onlytrans';o.textContent='📝 Só transcrever (sem áudio)';o.style.display='';
   recording=false;
 }
-document.getElementById('recBtnPlain').onclick=()=>recording?stopRec():startRec(false);
-document.getElementById('recBtnTrans').onclick=()=>recording?stopRec():startRec(true);
+document.getElementById('recBtnPlain').onclick=()=>recording?stopRec():startRec('plain');
+document.getElementById('recBtnTrans').onclick=()=>recording?stopRec():startRec('both');
+document.getElementById('recBtnOnly').onclick=()=>recording?stopRec():startRec('only');
 
-async function startRec(withTranscription){
+async function startRec(mode){
+  const wantsAudio=(mode==='plain'||mode==='both');
+  const wantsTranscription=(mode==='both'||mode==='only');
   try{
     const stream=await navigator.mediaDevices.getUserMedia({audio:true});
-    mediaRec=new MediaRecorder(stream);audioChunks=[];
-    mediaRec.ondataavailable=e=>audioChunks.push(e.data);
-    mediaRec.onstop=()=>{pendingAudio=new Blob(audioChunks,{type:'audio/webm'});
-      document.getElementById('audioPreview').innerHTML=`<audio controls src="${blobURL(pendingAudio)}" style="width:100%;margin-top:8px"></audio>`;
-      stream.getTracks().forEach(t=>t.stop());};
-    mediaRec.start();
-    transcriptActive=withTranscription;
-    if(withTranscription){
+    if(wantsAudio){
+      mediaRec=new MediaRecorder(stream);audioChunks=[];
+      mediaRec.ondataavailable=e=>audioChunks.push(e.data);
+      mediaRec.onstop=()=>{pendingAudio=new Blob(audioChunks,{type:'audio/webm'});
+        document.getElementById('audioPreview').innerHTML=`<audio controls src="${blobURL(pendingAudio)}" style="width:100%;margin-top:8px"></audio>`;
+        stream.getTracks().forEach(t=>t.stop());};
+      mediaRec.start();
+    }else{
+      // só transcrição: NÃO grava áudio, libera o microfone para o reconhecimento (melhor no Android)
+      recStream=stream;
+    }
+    transcriptActive=wantsTranscription;
+    if(wantsTranscription){
       const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
       if(SR){
         finalTranscript=document.getElementById('fText').value?document.getElementById('fText').value+' ':'';
         startRecognition(SR);
-        document.getElementById('recNote').innerHTML='🔴 <b>Ouvindo...</b> fale normalmente. O texto aparece abaixo enquanto você fala.';
+        document.getElementById('recNote').innerHTML='🔴 <b>Ouvindo...</b> fale normalmente. O texto aparece abaixo.';
       }else{
-        document.getElementById('recNote').innerHTML='⚠️ Este navegador não transcreve. O áudio será salvo e você pode digitar o texto. Use o <b>Chrome</b> (PC ou Android).';
+        document.getElementById('recNote').innerHTML='⚠️ Este navegador não transcreve. Use o <b>Chrome</b>.';
       }
     }
-    const active=withTranscription?document.getElementById('recBtnTrans'):document.getElementById('recBtnPlain');
-    const other=withTranscription?document.getElementById('recBtnPlain'):document.getElementById('recBtnTrans');
-    active.className='rec-btn rec-stop';active.textContent='⏹️ Parar gravação';
-    other.style.display='none';
+    const ids={plain:'recBtnPlain',both:'recBtnTrans',only:'recBtnOnly'};
+    const activeId=ids[mode];
+    document.querySelectorAll('.rec-row .rec-btn').forEach(b=>{b.style.display=(b.id===activeId)?'':'none'});
+    const active=document.getElementById(activeId);
+    active.className='rec-btn rec-stop';active.textContent='⏹️ Parar';
     recording=true;
   }catch(err){
     let msg='Não foi possível acessar o microfone.';
@@ -893,6 +960,7 @@ function startRecognition(SR){
 function stopRec(silent){
   transcriptActive=false;
   if(mediaRec&&mediaRec.state!=='inactive')mediaRec.stop();
+  if(recStream){try{recStream.getTracks().forEach(t=>t.stop())}catch(e){}recStream=null}
   if(recognition){try{recognition.onend=null;recognition.stop()}catch(e){}recognition=null}
   // ao parar, deixa o texto coeso
   if(!silent){
@@ -906,12 +974,17 @@ function stopRec(silent){
 function tidyText(raw){
   let t=raw.replace(/\s+/g,' ').trim();
   if(!t)return t;
+  // vírgula antes de conjunções comuns (quando não houver pontuação antes)
+  t=t.replace(/([^\s,.;:!?])\s+(mas|porém|contudo|então|porque|pois|que|e que|já que|enquanto)\s/gi,'$1, $2 ');
+  // vírgula depois de marcadores APENAS no início de frase (começo do texto ou após . ! ?)
+  t=t.replace(/(^|[.!?]\s+)(hoje|ontem|amanhã|hoje de manhã|de manhã|à tarde|à noite|enfim|aliás|por fim|além disso)\s+(?=[a-záàâãéêíóôõúçA-Z])/gi,(m,pre,w)=>pre+w+', ');
+  // ajusta espaços de pontuação
   t=t.replace(/\s+([,.;:!?])/g,'$1').replace(/([,.;:!?])(?=[^\s])/g,'$1 ');
-  // capitaliza início e após . ! ?
+  // remove vírgulas duplicadas
+  t=t.replace(/,\s*,/g,',');
+  // capitaliza início de frases
   t=t.replace(/(^\s*[a-záàâãéêíóôõúç])|([.!?]\s+[a-záàâãéêíóôõúç])/g,m=>m.toUpperCase());
-  // primeira letra maiúscula
   t=t.charAt(0).toUpperCase()+t.slice(1);
-  // ponto final se não houver pontuação no fim
   if(!/[.!?…]$/.test(t))t+='.';
   return t;
 }
@@ -974,7 +1047,8 @@ async function buildBackupBlob(){
     if(e.media&&e.media.length){o.media=[];for(const m of e.media)o.media.push({type:m.type,data:await blobToB64(m.blob)})}
     out.push(o);
   }
-  const backup={app:'diario-filha',version:1,exportedAt:new Date().toISOString(),name:babyName,birth,entries:out};
+  const info=await allInfo();
+  const backup={app:'diario-filha',version:1,exportedAt:new Date().toISOString(),name:babyName,birth,palette:currentPalette,entries:out,info};
   return new Blob([JSON.stringify(backup)],{type:'application/json'});
 }
 function backupFilename(){return `backup-diario-${new Date().toISOString().slice(0,10)}.json`}
@@ -1077,11 +1151,108 @@ document.getElementById('importFile').onchange=async e=>{
       const entry={id:o.id||Date.now()+Math.random(),date:o.date,scope:o.scope,theme:o.theme,title:o.title||'',text:o.text||'',transcript:o.transcript||'',audio:o.audio?b64ToBlob(o.audio):null,media:(o.media||[]).map(m=>({type:m.type,blob:b64ToBlob(m.data)}))};
       await putEntry(entry);
     }
+    if(backup.info){for(const it of backup.info){await putInfo(it)}}
+    if(backup.palette){currentPalette=backup.palette;await putMeta('palette',currentPalette);applyPalette(currentPalette)}
     document.getElementById('babyName').textContent=babyName;
     render();toast('Backup importado 🎉');
   }catch(err){toast('Arquivo inválido')}
   e.target.value='';
 };
+
+/* ---------- Informações ---------- */
+const INFO_COLORS=[
+  {id:'rosa', nm:'Rosa', c:'#c06b6b'},
+  {id:'terra', nm:'Terra', c:'#e8a87c'},
+  {id:'verde', nm:'Verde', c:'#9bab8a'},
+  {id:'azul', nm:'Azul', c:'#7ca8d9'},
+  {id:'roxo', nm:'Roxo', c:'#a98bd9'},
+  {id:'dourado', nm:'Dourado', c:'#d9b35a'},
+];
+const infoColorOf=id=>INFO_COLORS.find(c=>c.id===id)||INFO_COLORS[0];
+let editingInfoId=null, selInfoColor='rosa';
+
+async function renderInfoList(){
+  const list=document.getElementById('infoList');
+  if(!list)return;
+  const items=(await allInfo()).sort((a,b)=>(a.order??0)-(b.order??0));
+  if(!items.length){
+    list.innerHTML=`<div class="empty"><span class="big">📌</span>Nenhuma informação ainda.<br><span style="font-size:12px">Toque em ＋ para adicionar hospital de nascimento, batismo, etc.</span></div>`;
+    return;
+  }
+  list.innerHTML=items.map((it,idx)=>{
+    const col=infoColorOf(it.color);
+    return `<div class="info-card" style="border-left-color:${col.c}">
+      <div class="info-card-top">
+        <div class="info-card-title" style="color:${col.c}">${escapeHtml(it.title)}</div>
+        <div class="info-reorder">
+          <button onclick="moveInfo('${it.id}',-1)" ${idx===0?'disabled':''} aria-label="Subir">▲</button>
+          <button onclick="moveInfo('${it.id}',1)" ${idx===items.length-1?'disabled':''} aria-label="Descer">▼</button>
+        </div>
+      </div>
+      ${it.content?`<div class="info-card-content">${escapeHtml(it.content)}</div>`:''}
+      <div class="info-card-actions">
+        <button onclick="editInfo('${it.id}')">✏️ editar</button>
+        <button onclick="removeInfo('${it.id}')">🗑️ excluir</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function buildInfoColors(){
+  const c=document.getElementById('infoColors');
+  c.innerHTML=INFO_COLORS.map(col=>`<button class="ic-swatch ${col.id===selInfoColor?'on':''}" data-c="${col.id}" style="background:${col.c}" title="${col.nm}"></button>`).join('');
+  c.querySelectorAll('.ic-swatch').forEach(b=>b.onclick=()=>{selInfoColor=b.dataset.c;buildInfoColors()});
+}
+
+function openInfoSheet(){
+  editingInfoId=null;selInfoColor='rosa';
+  document.getElementById('infoSheetTitle').textContent='Nova informação';
+  document.getElementById('iTitle').value='';
+  document.getElementById('iContent').value='';
+  buildInfoColors();
+  document.getElementById('infoOverlay').classList.add('show');
+}
+async function editInfo(id){
+  const items=await allInfo();const it=items.find(x=>x.id===id);if(!it)return;
+  editingInfoId=id;selInfoColor=it.color||'rosa';
+  document.getElementById('infoSheetTitle').textContent='Editar informação';
+  document.getElementById('iTitle').value=it.title||'';
+  document.getElementById('iContent').value=it.content||'';
+  buildInfoColors();
+  document.getElementById('infoOverlay').classList.add('show');
+}
+function closeInfoSheet(){document.getElementById('infoOverlay').classList.remove('show')}
+
+async function saveInfo(){
+  const title=document.getElementById('iTitle').value.trim();
+  const content=document.getElementById('iContent').value.trim();
+  if(!title){toast('Dê um título');return}
+  if(editingInfoId){
+    const items=await allInfo();const it=items.find(x=>x.id===editingInfoId);
+    it.title=title;it.content=content;it.color=selInfoColor;
+    await putInfo(it);
+  }else{
+    const items=await allInfo();
+    const maxOrder=items.reduce((m,x)=>Math.max(m,x.order??0),0);
+    await putInfo({id:'i'+Date.now(),title,content,color:selInfoColor,order:maxOrder+1});
+  }
+  closeInfoSheet();renderInfoList();toast('Salvo 💛');
+}
+async function removeInfo(id){
+  if(!confirm('Excluir esta informação?'))return;
+  await delInfo(id);renderInfoList();toast('Excluído');
+}
+async function moveInfo(id,dir){
+  const items=(await allInfo()).sort((a,b)=>(a.order??0)-(b.order??0));
+  const idx=items.findIndex(x=>x.id===id);
+  const swap=idx+dir;
+  if(swap<0||swap>=items.length)return;
+  const a=items[idx],b=items[swap];
+  const tmp=a.order;a.order=b.order;b.order=tmp;
+  await putInfo(a);await putInfo(b);
+  renderInfoList();
+}
+document.getElementById('infoOverlay').onclick=e=>{if(e.target.id==='infoOverlay')closeInfoSheet()};
 
 /* ---------- Init ---------- */
 (async()=>{
@@ -1110,4 +1281,3 @@ document.getElementById('importFile').onchange=async e=>{
 </script>
 </body>
 </html>
-
