@@ -124,6 +124,10 @@
   .media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-top:10px}
   .media-grid img,.media-grid video{width:100%;height:90px;object-fit:cover;border-radius:12px;cursor:pointer;background:#eee}
   .entry .del{background:none;border:none;color:var(--rose-deep);font-size:12px;cursor:pointer;opacity:.7;margin-top:10px}
+  .entry-actions{display:flex;gap:16px;margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+  .entry-actions button{background:none;border:none;font-size:12.5px;font-weight:700;cursor:pointer;font-family:'Nunito Sans';padding:0}
+  .entry-actions .edit{color:var(--ink-soft)}
+  .entry-actions .del{color:var(--rose-deep);margin-top:0;opacity:1}
   .scope-badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;color:#fff}
   .scope-dia{background:var(--sage)}
   .scope-semana{background:var(--terra)}
@@ -296,7 +300,7 @@
 <div class="overlay" id="overlay">
   <div class="sheet">
     <div class="grab"></div>
-    <h2>Novo registro</h2>
+    <h2 id="entrySheetTitle">Novo registro</h2>
 
     <label>Este registro é de um...</label>
     <div class="seg" id="scopeSeg">
@@ -334,7 +338,7 @@
 
     <div class="savebar">
       <button class="cancel" onclick="closeSheet()">Cancelar</button>
-      <button class="save" onclick="saveEntry()">Salvar registro</button>
+      <button class="save" id="entrySaveBtn" onclick="saveEntry()">Salvar registro</button>
     </div>
   </div>
 </div>
@@ -442,9 +446,10 @@ let resumoMode='semana', searchTerm='';
 let tlPeriod='all', tlTheme='all', tlSearch='';
 let tlStart='', tlEnd='';
 let pendingMedia=[]; // {type,blob}
+let editingEntryId=null;
 let pendingAudio=null;
 let recognition=null, mediaRec=null, audioChunks=[], recording=false;
-let transcriptActive=false, finalTranscript='', recStream=null;
+let transcriptActive=false, finalTranscript='', recStream=null, gotSpeech=false;
 let babyName='minha filha', birth=null;
 
 /* ---------- Utils ---------- */
@@ -698,7 +703,10 @@ function card(e,q){
       <div style="text-align:right"><span class="theme-tag">${t.ic} ${t.label}</span><div style="margin-top:6px">${scopeBadge}</div></div>
     </div>
     ${title}${text}${audio}${transcript}${media}
-    <button class="del" onclick="removeEntry(${e.id})">excluir registro</button>
+    <div class="entry-actions">
+      <button class="edit" onclick="editEntry(${e.id})">✏️ editar</button>
+      <button class="del" onclick="removeEntry(${e.id})">🗑️ excluir</button>
+    </div>
   </div>`;
 }
 function escapeHtml(s){return s.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))}
@@ -849,6 +857,9 @@ function buildThemePick(){
   tp.querySelectorAll('button').forEach(b=>b.onclick=()=>{selTheme=b.dataset.t;buildThemePick()});
 }
 function openSheet(){
+  editingEntryId=null;
+  document.getElementById('entrySheetTitle').textContent='Novo registro';
+  document.getElementById('entrySaveBtn').textContent='Salvar registro';
   scope='dia';selTheme='marcos';pendingMedia=[];pendingAudio=null;
   document.getElementById('fTitle').value='';
   document.getElementById('fText').value='';
@@ -857,9 +868,30 @@ function openSheet(){
   document.getElementById('audioPreview').innerHTML='';
   document.querySelectorAll('#scopeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.scope==='dia'));
   buildThemePick();resetRecBtn();
+  document.getElementById('recNote').innerHTML='No <b>celular</b>, use “Só transcrever” (texto sem salvar áudio) — funciona melhor no Android. No <b>computador</b>, “Gravar + transcrever” faz os dois. Tudo só no Chrome, com microfone permitido.';
   document.getElementById('overlay').classList.add('show');
 }
-function closeSheet(){document.getElementById('overlay').classList.remove('show');stopRec(true)}
+async function editEntry(id){
+  const data=await allEntries();
+  const e=data.find(x=>x.id===id);
+  if(!e)return;
+  editingEntryId=id;
+  document.getElementById('entrySheetTitle').textContent='Editar registro';
+  document.getElementById('entrySaveBtn').textContent='Salvar alterações';
+  scope=e.scope||'dia';selTheme=e.theme||'marcos';
+  pendingMedia=(e.media||[]).map(m=>({type:m.type,blob:m.blob}));
+  pendingAudio=e.audio||null;
+  document.getElementById('fTitle').value=e.title||'';
+  document.getElementById('fText').value=e.text||e.transcript||'';
+  document.getElementById('fDate').value=e.date;
+  document.querySelectorAll('#scopeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.scope===scope));
+  buildThemePick();resetRecBtn();drawMediaPreview();
+  document.getElementById('audioPreview').innerHTML=pendingAudio?`<audio controls src="${blobURL(pendingAudio)}" style="width:100%;margin-top:8px"></audio><button type="button" class="tidy-btn" style="margin-top:6px" onclick="clearPendingAudio()">🗑️ remover áudio</button>`:'';
+  document.getElementById('recNote').innerHTML='Editando. Gravar um novo áudio substitui o anterior.';
+  document.getElementById('overlay').classList.add('show');
+}
+function clearPendingAudio(){pendingAudio=null;document.getElementById('audioPreview').innerHTML='';toast('Áudio removido')}
+function closeSheet(){editingEntryId=null;document.getElementById('overlay').classList.remove('show');stopRec(true)}
 
 document.querySelectorAll('#scopeSeg button').forEach(b=>b.onclick=()=>{scope=b.dataset.scope;document.querySelectorAll('#scopeSeg button').forEach(x=>x.classList.toggle('on',x===b))});
 
@@ -890,17 +922,16 @@ async function startRec(mode){
   const wantsAudio=(mode==='plain'||mode==='both');
   const wantsTranscription=(mode==='both'||mode==='only');
   try{
-    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    // No modo "só transcrever" NÃO abrimos o microfone nós mesmos —
+    // deixamos o reconhecimento de voz controlá-lo (essencial no Android).
     if(wantsAudio){
+      const stream=await navigator.mediaDevices.getUserMedia({audio:true});
       mediaRec=new MediaRecorder(stream);audioChunks=[];
       mediaRec.ondataavailable=e=>audioChunks.push(e.data);
       mediaRec.onstop=()=>{pendingAudio=new Blob(audioChunks,{type:'audio/webm'});
         document.getElementById('audioPreview').innerHTML=`<audio controls src="${blobURL(pendingAudio)}" style="width:100%;margin-top:8px"></audio>`;
         stream.getTracks().forEach(t=>t.stop());};
       mediaRec.start();
-    }else{
-      // só transcrição: NÃO grava áudio, libera o microfone para o reconhecimento (melhor no Android)
-      recStream=stream;
     }
     transcriptActive=wantsTranscription;
     if(wantsTranscription){
@@ -935,6 +966,7 @@ function startRecognition(SR){
   recognition.continuous=true;
   recognition.interimResults=true;
   recognition.onresult=ev=>{
+    gotSpeech=true;
     let interim='';
     for(let i=ev.resultIndex;i<ev.results.length;i++){
       const t=ev.results[i][0].transcript;
@@ -945,9 +977,13 @@ function startRecognition(SR){
   };
   recognition.onerror=ev=>{
     if(ev.error==='not-allowed'||ev.error==='service-not-allowed'){
-      document.getElementById('recNote').innerHTML='⚠️ Microfone bloqueado para transcrição. Toque no 🔒 e permita o microfone.';
+      document.getElementById('recNote').innerHTML='⚠️ Microfone bloqueado para transcrição. Toque no 🔒 ao lado do endereço, permita o microfone e recarregue.';
+      transcriptActive=false;
+    }else if(ev.error==='language-not-supported'){
+      document.getElementById('recNote').innerHTML='⚠️ Português não disponível para transcrição neste aparelho. Verifique a “Entrada por voz do Google” nas configurações.';
       transcriptActive=false;
     }
+    // 'no-speech' e 'aborted' são normais no Android: o onend reinicia
   };
   // AUTO-RESTART: no Android o reconhecimento para sozinho; reinicia enquanto estiver gravando
   recognition.onend=()=>{
@@ -955,7 +991,14 @@ function startRecognition(SR){
       try{recognition.start()}catch(e){setTimeout(()=>{if(transcriptActive&&recording)try{recognition.start()}catch(_){}}, 300)}
     }
   };
+  gotSpeech=false;
   try{recognition.start()}catch(e){}
+  // aviso se nada for captado em ~6s
+  setTimeout(()=>{
+    if(recording&&transcriptActive&&!gotSpeech){
+      document.getElementById('recNote').innerHTML='🔴 Ouvindo... <span style="color:var(--rose-deep)">se nada aparecer, fale mais perto do microfone. Se continuar, toque em “Parar” e tente de novo.</span>';
+    }
+  },6000);
 }
 function stopRec(silent){
   transcriptActive=false;
@@ -974,18 +1017,49 @@ function stopRec(silent){
 function tidyText(raw){
   let t=raw.replace(/\s+/g,' ').trim();
   if(!t)return t;
-  // vírgula antes de conjunções comuns (quando não houver pontuação antes)
+
+  // 1) Converte pontuação DITADA em voz para símbolos
+  // (ex.: "ponto de exclamação", "vírgula", "interrogação")
+  t=t.replace(/\s*\b(ponto de exclamação|ponto de exclamacao|exclamação|exclamacao)\b/gi,'!');
+  t=t.replace(/\s*\b(ponto de interrogação|ponto de interrogacao|interrogação|interrogacao)\b/gi,'?');
+  t=t.replace(/\s*\b(reticências|reticencias)\b/gi,'…');
+  t=t.replace(/\s*\b(ponto e vírgula|ponto e virgula)\b/gi,';');
+  t=t.replace(/\s*\b(dois pontos)\b/gi,':');
+  t=t.replace(/\s*\b(vírgula|virgula)\b/gi,',');
+  t=t.replace(/\s*\b(ponto final|ponto)\b/gi,'.');
+  t=t.replace(/\b(nova linha|novo parágrafo|novo paragrafo|quebra de linha)\b/gi,'\n');
+
+  // 2) (pergunta tratada no final, após segmentar frases)
+
+  // 3) vírgula antes de conjunções comuns
   t=t.replace(/([^\s,.;:!?])\s+(mas|porém|contudo|então|porque|pois|que|e que|já que|enquanto)\s/gi,'$1, $2 ');
-  // vírgula depois de marcadores APENAS no início de frase (começo do texto ou após . ! ?)
+  // vírgula depois de marcadores no início de frase
   t=t.replace(/(^|[.!?]\s+)(hoje|ontem|amanhã|hoje de manhã|de manhã|à tarde|à noite|enfim|aliás|por fim|além disso)\s+(?=[a-záàâãéêíóôõúçA-Z])/gi,(m,pre,w)=>pre+w+', ');
-  // ajusta espaços de pontuação
-  t=t.replace(/\s+([,.;:!?])/g,'$1').replace(/([,.;:!?])(?=[^\s])/g,'$1 ');
-  // remove vírgulas duplicadas
-  t=t.replace(/,\s*,/g,',');
-  // capitaliza início de frases
-  t=t.replace(/(^\s*[a-záàâãéêíóôõúç])|([.!?]\s+[a-záàâãéêíóôõúç])/g,m=>m.toUpperCase());
+
+  // 4) interjeições de exclamação -> !
+  t=t.replace(/\b(que lindo|que linda|que fofo|que fofa|que amor|nossa|uau|incrível|incrivel|maravilha|que delícia|que delicia)\b(?=[\s.]|$)/gi,(m,w)=>w+'!');
+
+  // 5) ajusta espaços de pontuação
+  t=t.replace(/\s+([,.;:!?…])/g,'$1').replace(/([,.;:!?…])(?=[^\s\n])/g,'$1 ');
+  // remove pontuação duplicada
+  t=t.replace(/([,.;:!?])\s*\1+/g,'$1').replace(/,\s*,/g,',');
+
+  // 6) capitaliza início de frases (após . ! ? … e quebras de linha)
+  t=t.replace(/(^\s*[a-záàâãéêíóôõúç])|([.!?…]\s+[a-záàâãéêíóôõúç])|(\n\s*[a-záàâãéêíóôõúç])/g,m=>m.toUpperCase());
   t=t.charAt(0).toUpperCase()+t.slice(1);
-  if(!/[.!?…]$/.test(t))t+='.';
+
+  // 7) pontuação final se faltar
+  if(!/[.!?…]$/.test(t.trim()))t=t.trim()+'.';
+  t=t.trim();
+
+  // 8) Perguntas: frase iniciada por pronome interrogativo termina com ? (se terminava em .)
+  t=t.replace(/([^.!?…]*?)([.])(\s|$)/g,(m,sentence,dot,after)=>{
+    const s=sentence.trim();
+    if(/^(quem|o que|que|qual|quais|quando|onde|aonde|por que|por quê|como|quanto|quanta|quantos|quantas|será|cadê|cade)\b/i.test(s)){
+      return sentence+'?'+after;
+    }
+    return m;
+  });
   return t;
 }
 function tidyField(){
@@ -1004,7 +1078,8 @@ async function saveEntry(){
   if(recording)stopRec(true);
   await new Promise(r=>setTimeout(r,250)); // deixa o blob de áudio fechar
   const entry={
-    id:Date.now(),date,scope,theme:selTheme,title,text,
+    id: editingEntryId||Date.now(),
+    date,scope,theme:selTheme,title,text,
     transcript: (pendingAudio&&text)?text:'',
     audio:pendingAudio||null,
     media:pendingMedia.map(m=>({type:m.type,blob:m.blob})),
@@ -1012,7 +1087,9 @@ async function saveEntry(){
   // se há áudio, joga o texto pra transcrição; senão fica como texto livre
   if(pendingAudio){entry.transcript=text;entry.text=''}
   await putEntry(entry);
-  closeSheet();render();toast('Registro salvo 💛');
+  const wasEditing=!!editingEntryId;
+  editingEntryId=null;
+  closeSheet();render();toast(wasEditing?'Registro atualizado 💛':'Registro salvo 💛');
 }
 async function removeEntry(id){if(confirm('Excluir este registro? Não dá pra desfazer.')){await delEntry(id);render();toast('Registro excluído')}}
 
