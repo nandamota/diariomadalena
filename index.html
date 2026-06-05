@@ -253,6 +253,8 @@
   .info-colors{display:flex;gap:10px;flex-wrap:wrap}
   .ic-swatch{width:38px;height:38px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:.2s}
   .ic-swatch.on{border-color:var(--ink);transform:scale(1.08)}
+  .ic-custom{width:38px;height:38px;border-radius:50%;border:3px solid transparent;cursor:pointer;overflow:hidden;display:inline-block;position:relative}
+  .ic-custom.on{border-color:var(--ink);transform:scale(1.08)}
 </style>
 </head>
 <body>
@@ -965,15 +967,19 @@ function startRecognition(SR){
   recognition.lang='pt-BR';
   recognition.continuous=true;
   recognition.interimResults=true;
+  // sessionFinal: texto final acumulado SÓ desta sessão de reconhecimento.
+  // finalTranscript: texto consolidado de sessões anteriores.
+  let sessionFinal='';
   recognition.onresult=ev=>{
     gotSpeech=true;
+    sessionFinal='';
     let interim='';
-    for(let i=ev.resultIndex;i<ev.results.length;i++){
+    for(let i=0;i<ev.results.length;i++){
       const t=ev.results[i][0].transcript;
-      if(ev.results[i].isFinal)finalTranscript+=t+' ';
+      if(ev.results[i].isFinal)sessionFinal+=t+' ';
       else interim+=t;
     }
-    document.getElementById('fText').value=(finalTranscript+interim).trim();
+    document.getElementById('fText').value=(finalTranscript+sessionFinal+interim).trim();
   };
   recognition.onerror=ev=>{
     if(ev.error==='not-allowed'||ev.error==='service-not-allowed'){
@@ -985,15 +991,17 @@ function startRecognition(SR){
     }
     // 'no-speech' e 'aborted' são normais no Android: o onend reinicia
   };
-  // AUTO-RESTART: no Android o reconhecimento para sozinho; reinicia enquanto estiver gravando
+  // AUTO-RESTART: no Android o reconhecimento para sozinho.
+  // Ao terminar a sessão, consolida o texto final dela em finalTranscript
+  // (evita duplicação) e reinicia uma sessão limpa.
   recognition.onend=()=>{
+    if(sessionFinal){finalTranscript+=sessionFinal;sessionFinal='';}
     if(transcriptActive&&recording){
       try{recognition.start()}catch(e){setTimeout(()=>{if(transcriptActive&&recording)try{recognition.start()}catch(_){}}, 300)}
     }
   };
   gotSpeech=false;
   try{recognition.start()}catch(e){}
-  // aviso se nada for captado em ~6s
   setTimeout(()=>{
     if(recording&&transcriptActive&&!gotSpeech){
       document.getElementById('recNote').innerHTML='🔴 Ouvindo... <span style="color:var(--rose-deep)">se nada aparecer, fale mais perto do microfone. Se continuar, toque em “Parar” e tente de novo.</span>';
@@ -1031,16 +1039,20 @@ function tidyText(raw){
 
   // 2) (pergunta tratada no final, após segmentar frases)
 
-  // 3) vírgula antes de conjunções comuns
-  t=t.replace(/([^\s,.;:!?])\s+(mas|porém|contudo|então|porque|pois|que|e que|já que|enquanto)\s/gi,'$1, $2 ');
-  // vírgula depois de marcadores no início de frase
-  t=t.replace(/(^|[.!?]\s+)(hoje|ontem|amanhã|hoje de manhã|de manhã|à tarde|à noite|enfim|aliás|por fim|além disso)\s+(?=[a-záàâãéêíóôõúçA-Z])/gi,(m,pre,w)=>pre+w+', ');
+  // 3) vírgula antes de conjunções/locuções comuns
+  t=t.replace(/([^\s,.;:!?])\s+(mas|porém|contudo|todavia|entretanto|então|porque|pois|que|e que|já que|enquanto|ou seja|isto é|por isso|portanto|logo|assim como|embora|apesar de|caso|se bem que)\s/gi,'$1, $2 ');
+  // vírgula depois de advérbios/locuções no início de frase
+  t=t.replace(/(^|[.!?…]\s+)(hoje|ontem|amanhã|hoje de manhã|de manhã|à tarde|à noite|de repente|finalmente|enfim|aliás|por fim|além disso|primeiramente|depois disso|em seguida|logo depois|por enquanto|felizmente|infelizmente|claro|sim|não|talvez|provavelmente)\s+(?=[a-zA-Záàâãéêíóôõúç])/gi,(m,pre,w)=>pre+w+', ');
+  // vírgula em vocativos comuns (nome no início chamando)
+  // (enumeração automática removida: gerava vírgulas erradas)
 
-  // 4) interjeições de exclamação -> !
-  t=t.replace(/\b(que lindo|que linda|que fofo|que fofa|que amor|nossa|uau|incrível|incrivel|maravilha|que delícia|que delicia)\b(?=[\s.]|$)/gi,(m,w)=>w+'!');
+  // 4) exclamação: interjeições e expressões de emoção -> !
+  t=t.replace(/\b(que lindo|que linda|que fofo|que fofa|que amor|que gracinha|que coisa linda|nossa|uau|eba|aleluia|graças a deus|incrível|incrivel|maravilha|maravilhoso|maravilhosa|que delícia|que delicia|que orgulho|que felicidade|finalmente|consegui|conseguiu)\b(?=[\s.,]|$)/gi,(m,w)=>w+'!');
 
   // 5) ajusta espaços de pontuação
   t=t.replace(/\s+([,.;:!?…])/g,'$1').replace(/([,.;:!?…])(?=[^\s\n])/g,'$1 ');
+  // limpa combinações erradas: "! ," "? ," "! ." etc.
+  t=t.replace(/([!?…])\s*,\s*/g,'$1 ').replace(/([!?])\s*\.\s*/g,'$1 ');
   // remove pontuação duplicada
   t=t.replace(/([,.;:!?])\s*\1+/g,'$1').replace(/,\s*,/g,',');
 
@@ -1052,10 +1064,10 @@ function tidyText(raw){
   if(!/[.!?…]$/.test(t.trim()))t=t.trim()+'.';
   t=t.trim();
 
-  // 8) Perguntas: frase iniciada por pronome interrogativo termina com ? (se terminava em .)
+  // 8) Perguntas: frase iniciada por pronome/expressão interrogativa termina com ?
   t=t.replace(/([^.!?…]*?)([.])(\s|$)/g,(m,sentence,dot,after)=>{
     const s=sentence.trim();
-    if(/^(quem|o que|que|qual|quais|quando|onde|aonde|por que|por quê|como|quanto|quanta|quantos|quantas|será|cadê|cade)\b/i.test(s)){
+    if(/^(quem|o que|que|qual|quais|quando|onde|aonde|por que|por quê|como|quanto|quanta|quantos|quantas|será|cadê|cade|você acha|tu achas|sera que|será que|por acaso|acaso)\b/i.test(s)){
       return sentence+'?'+after;
     }
     return m;
@@ -1245,7 +1257,10 @@ const INFO_COLORS=[
   {id:'roxo', nm:'Roxo', c:'#a98bd9'},
   {id:'dourado', nm:'Dourado', c:'#d9b35a'},
 ];
-const infoColorOf=id=>INFO_COLORS.find(c=>c.id===id)||INFO_COLORS[0];
+const infoColorOf=id=>{
+  if(typeof id==='string'&&id.charAt(0)==='#')return {id,nm:'Personalizada',c:id};
+  return INFO_COLORS.find(c=>c.id===id)||INFO_COLORS[0];
+};
 let editingInfoId=null, selInfoColor='rosa';
 
 async function renderInfoList(){
@@ -1277,8 +1292,16 @@ async function renderInfoList(){
 
 function buildInfoColors(){
   const c=document.getElementById('infoColors');
-  c.innerHTML=INFO_COLORS.map(col=>`<button class="ic-swatch ${col.id===selInfoColor?'on':''}" data-c="${col.id}" style="background:${col.c}" title="${col.nm}"></button>`).join('');
+  const isCustom=typeof selInfoColor==='string'&&selInfoColor.charAt(0)==='#';
+  const presets=INFO_COLORS.map(col=>`<button class="ic-swatch ${col.id===selInfoColor?'on':''}" data-c="${col.id}" style="background:${col.c}" title="${col.nm}"></button>`).join('');
+  const customVal=isCustom?selInfoColor:'#c06b6b';
+  c.innerHTML=`${presets}
+    <label class="ic-custom ${isCustom?'on':''}" title="Cor personalizada" style="background:${isCustom?selInfoColor:'conic-gradient(red,orange,yellow,green,blue,violet,red)'}">
+      <input type="color" id="icCustom" value="${customVal}" style="opacity:0;width:100%;height:100%;cursor:pointer">
+    </label>`;
   c.querySelectorAll('.ic-swatch').forEach(b=>b.onclick=()=>{selInfoColor=b.dataset.c;buildInfoColors()});
+  const custom=document.getElementById('icCustom');
+  if(custom)custom.oninput=e=>{selInfoColor=e.target.value;buildInfoColors()};
 }
 
 function openInfoSheet(){
