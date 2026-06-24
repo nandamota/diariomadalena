@@ -213,6 +213,10 @@
   .bc-opt{display:block;width:100%;text-align:left;background:var(--bg-card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;font-size:15px;font-weight:700;color:var(--ink);font-family:'Nunito Sans';cursor:pointer}
   .bc-opt span{display:block;font-size:12px;font-weight:400;color:var(--ink-soft);margin-top:3px}
   .bc-opt:active{background:var(--cream)}
+  .bc-primary{background:var(--rose-deep);color:#fff;border-color:var(--rose-deep)}
+  .bc-primary span{color:rgba(255,255,255,.85)}
+  .bc-primary:active{background:var(--rose-deep);filter:brightness(.95)}
+  .bc-hint{font-size:12.5px;color:var(--ink-soft);background:var(--cream);border-radius:12px;padding:11px 13px;margin:4px 0 10px;line-height:1.5}
   .bc-cancel{display:block;width:100%;background:var(--cream);border:none;border-radius:14px;padding:13px;font-size:14px;font-weight:700;color:var(--ink);font-family:'Nunito Sans';cursor:pointer;margin-top:4px}
   .toast.show{opacity:1}
 
@@ -1291,13 +1295,20 @@ function doBackup(){
   openBackupChooser();
 }
 async function openBackupChooser(){
-  // monta as opções disponíveis neste aparelho/navegador
-  const canShare = !!(navigator.canShare && navigator.share);
+  // detecta se ESTE navegador realmente compartilha ARQUIVOS (não só texto)
+  let canShareFiles=false;
+  try{
+    const probe=new File([new Blob(['x'],{type:'text/plain'})],'x.txt',{type:'text/plain'});
+    canShareFiles = !!(navigator.canShare && navigator.canShare({files:[probe]}) && navigator.share);
+  }catch(e){canShareFiles=false}
   const canFolder = ('showDirectoryPicker' in window);
   let html=`<div class="bc-title">Como salvar o backup?</div>`;
-  if(canShare)html+=`<button class="bc-opt" onclick="backupVia('share')">📤 Enviar / salvar no Drive<span>Abre o menu do celular para escolher o Google Drive, WhatsApp, etc.</span></button>`;
+  if(canShareFiles)html+=`<button class="bc-opt bc-primary" onclick="backupVia('share')">📤 Salvar no Google Drive<span>Abre o menu do celular — escolha o Google Drive (ou WhatsApp, e-mail...).</span></button>`;
   if(canFolder)html+=`<button class="bc-opt" onclick="backupVia('folder')">📁 Salvar numa pasta<span>Escolha uma pasta (inclui Google Drive no computador).</span></button>`;
-  html+=`<button class="bc-opt" onclick="backupVia('download')">⬇️ Baixar arquivo<span>Salva na pasta de Downloads do aparelho.</span></button>`;
+  html+=`<button class="bc-opt" onclick="backupVia('download')">⬇️ Baixar arquivo<span>Salva em Downloads. No celular, o Drive não aparece aqui.</span></button>`;
+  if(!canShareFiles&&!canFolder){
+    html+=`<div class="bc-hint">Para guardar no Drive: baixe o arquivo e depois envie-o pelo app do Google Drive (botão + → Enviar).</div>`;
+  }
   html+=`<button class="bc-cancel" onclick="closeBackupChooser()">Cancelar</button>`;
   let ov=document.getElementById('backupChooser');
   if(!ov){
@@ -1329,12 +1340,20 @@ async function shareBackup(){
   try{
     toast('Preparando backup...');
     const {blob,count}=await buildBackupBlob((i,n)=>{if(n>3)toast(`Processando ${i} de ${n}...`)});
-    const file=new File([blob],backupFilename(),{type:'application/json'});
-    if(navigator.canShare&&navigator.canShare({files:[file]})){
-      await navigator.share({files:[file],title:'Backup do Diário',text:'Backup do diário da minha filha'});
-      toast(`Backup pronto: ${count} registro${count!==1?'s':''} 💾`);
+    const fname=backupFilename();
+    // tenta com o tipo correto e, se não aceitar, com text/plain (mais aceito no Android)
+    let file=new File([blob],fname,{type:'application/json'});
+    let canShareFile = navigator.canShare && navigator.canShare({files:[file]});
+    if(!canShareFile){
+      file=new File([blob],fname,{type:'text/plain'});
+      canShareFile = navigator.canShare && navigator.canShare({files:[file]});
+    }
+    if(canShareFile){
+      await navigator.share({files:[file],title:'Backup do Diário'});
+      toast(`Backup enviado: ${count} registro${count!==1?'s':''} 💾`);
     }else{
-      // se não puder compartilhar arquivo, cai pro download
+      // este navegador não compartilha arquivos: avisa e oferece o download
+      toast('Seu navegador não compartilha arquivos. Baixando para você enviar ao Drive manualmente.');
       exportData();
     }
   }catch(err){
