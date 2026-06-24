@@ -1368,8 +1368,17 @@ async function saveToDrive(silent){
 document.getElementById('importFile').onchange=async e=>{
   const file=e.target.files[0];if(!file)return;
   try{
-    const raw=await file.text();
-    if(!raw||!raw.trim()){toast('O arquivo está vazio');e.target.value='';return}
+    // tenta ler de duas formas (algumas fontes, como o Drive, falham em file.text())
+    let raw='';
+    try{ raw=await file.text(); }catch(_){}
+    if((!raw||!raw.trim()) && file.size>0){
+      // fallback: lê via FileReader (às vezes funciona quando .text() falha)
+      raw=await new Promise((res)=>{const r=new FileReader();r.onload=()=>res(r.result||'');r.onerror=()=>res('');r.readAsText(file)});
+    }
+    if(!raw||!raw.trim()){
+      alert('O arquivo veio vazio.\n\nIsso costuma acontecer ao escolher direto do Google Drive. Solução:\n\n1) Abra o app do Google Drive\n2) Toque nos 3 pontinhos (⋮) ao lado do backup\n3) Toque em "Fazer download"\n4) Aqui, escolha o arquivo na pasta Downloads (não pelo Drive)');
+      e.target.value='';return;
+    }
     let backup;
     try{backup=JSON.parse(raw)}catch(parseErr){toast('Arquivo não é um backup válido (.json)');e.target.value='';return}
     if(!backup||backup.app!=='diario-filha'||!Array.isArray(backup.entries)){
