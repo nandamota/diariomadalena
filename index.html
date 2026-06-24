@@ -872,7 +872,7 @@ function openSheet(){
   document.getElementById('audioPreview').innerHTML='';
   document.querySelectorAll('#scopeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.scope==='dia'));
   buildThemePick();resetRecBtn();
-  document.getElementById('recNote').innerHTML='No <b>celular</b>, use “Só transcrever” (texto sem salvar áudio) — funciona melhor no Android. No <b>computador</b>, “Gravar + transcrever” faz os dois. Tudo só no Chrome, com microfone permitido.';
+  setupAudioButtons();
   document.getElementById('overlay').classList.add('show');
 }
 async function editEntry(id){
@@ -911,11 +911,34 @@ function drawMediaPreview(){
 function rmMedia(i){pendingMedia.splice(i,1);drawMediaPreview()}
 
 /* ---------- Recording + transcription ---------- */
+const IS_MOBILE=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+function setupAudioButtons(){
+  const t=document.getElementById('recBtnTrans');
+  const o=document.getElementById('recBtnOnly');
+  const note=document.getElementById('recNote');
+  const onlyRow=o?o.parentElement:null;
+  if(IS_MOBILE){
+    // No celular a transcrição automática é instável — disponível só no computador.
+    if(t)t.style.display='none';
+    if(o)o.style.display='none';
+    if(onlyRow)onlyRow.style.display='none';
+    if(note)note.innerHTML='🎙️ Grave o áudio aqui. Para transcrever a fala em texto, abra o diário no <b>computador</b> (Chrome). No celular, você também pode tocar no campo de texto e usar o microfone 🎤 do seu teclado.';
+  }else{
+    if(note)note.innerHTML='“Gravar + transcrever” grava o áudio e converte a fala em texto na hora (Chrome). “Só transcrever” gera só o texto.';
+  }
+}
 function resetRecBtn(){
   const p=document.getElementById('recBtnPlain'),t=document.getElementById('recBtnTrans'),o=document.getElementById('recBtnOnly');
   p.className='rec-btn rec-start';p.textContent='🎙️ Só gravar';p.style.display='';
-  t.className='rec-btn rec-transcribe';t.textContent='✍️ Gravar + transcrever';t.style.display='';
-  o.className='rec-btn rec-onlytrans';o.textContent='📝 Só transcrever (sem áudio)';o.style.display='';
+  if(IS_MOBILE){
+    t.style.display='none';o.style.display='none';
+    if(o.parentElement)o.parentElement.style.display='none';
+    p.textContent='🎙️ Gravar áudio';
+  }else{
+    t.className='rec-btn rec-transcribe';t.textContent='✍️ Gravar + transcrever';t.style.display='';
+    o.className='rec-btn rec-onlytrans';o.textContent='📝 Só transcrever (sem áudio)';o.style.display='';
+    if(o.parentElement)o.parentElement.style.display='';
+  }
   recording=false;
 }
 document.getElementById('recBtnPlain').onclick=()=>recording?stopRec():startRec('plain');
@@ -974,19 +997,25 @@ async function startRec(mode){
 function startRecognition(SR){
   recognition=new SR();
   recognition.lang='pt-BR';
-  recognition.continuous=true;
+  // continuous=false: cada sessão devolve UM resultado final por fala.
+  // Isso evita o bug do Android de reprocessar resultados antigos (duplicação).
+  recognition.continuous=false;
   recognition.interimResults=true;
-  let sessionFinal='';
+  let committed=false;
   recognition.onresult=ev=>{
     gotSpeech=true;
-    sessionFinal='';
+    let sessionText='';
     let interim='';
+    // pega só o resultado mais recente desta sessão
     for(let i=0;i<ev.results.length;i++){
       const t=ev.results[i][0].transcript;
-      if(ev.results[i].isFinal)sessionFinal+=t+' ';
+      if(ev.results[i].isFinal)sessionText+=t+' ';
       else interim+=t;
     }
-    document.getElementById('fText').value=dedupeText((finalTranscript+sessionFinal+interim).trim());
+    // exibe consolidado + o que está sendo dito agora
+    document.getElementById('fText').value=dedupeText((finalTranscript+sessionText+interim).trim());
+    // guarda o final desta sessão para consolidar no onend
+    if(sessionText){window._lastSession=sessionText;}
   };
   recognition.onerror=ev=>{
     if(ev.error==='not-allowed'||ev.error==='service-not-allowed'){
@@ -998,12 +1027,17 @@ function startRecognition(SR){
     }
   };
   recognition.onend=()=>{
-    if(sessionFinal){finalTranscript=dedupeText((finalTranscript+sessionFinal).trim())+' ';sessionFinal='';}
+    // consolida o texto final desta sessão UMA única vez
+    if(window._lastSession){
+      finalTranscript=dedupeText((finalTranscript+window._lastSession).trim())+' ';
+      window._lastSession='';
+    }
+    // reinicia uma nova sessão limpa enquanto estiver gravando
     if(transcriptActive&&recording){
-      try{recognition.start()}catch(e){setTimeout(()=>{if(transcriptActive&&recording)try{recognition.start()}catch(_){}}, 300)}
+      try{recognition.start()}catch(e){setTimeout(()=>{if(transcriptActive&&recording)try{recognition.start()}catch(_){}}, 250)}
     }
   };
-  gotSpeech=false;
+  gotSpeech=false;window._lastSession='';
   try{recognition.start()}catch(e){}
   setTimeout(()=>{
     if(recording&&transcriptActive&&!gotSpeech){
@@ -1027,22 +1061,22 @@ function stopRec(silent){
 /* ---------- Deixar o texto coeso ---------- */
 function dedupeText(s){
   if(!s)return s;
+  const norm=w=>w.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[.,!?;:…]/g,'');
   let words=s.split(/\s+/).filter(Boolean);
   // 1) remove repetição imediata de 1 palavra
   let out=[];
   for(let i=0;i<words.length;i++){
-    if(i>0&&words[i].toLowerCase().replace(/[.,!?;:]/g,'')===words[i-1].toLowerCase().replace(/[.,!?;:]/g,''))continue;
+    if(i>0&&norm(words[i])===norm(words[i-1]))continue;
     out.push(words[i]);
   }
-  // 2) remove qualquer bloco de 2..8 palavras imediatamente repetido,
-  // varrendo todas as posições e repetindo até estabilizar
+  // 2) remove blocos de 2..12 palavras repetidos imediatamente, varrendo até estabilizar
   let changed=true,guard=0;
-  while(changed&&guard++<20){
+  while(changed&&guard++<30){
     changed=false;
-    for(let n=8;n>=2;n--){
+    for(let n=12;n>=2;n--){
       for(let i=0;i+2*n<=out.length;i++){
-        const a=out.slice(i,i+n).join(' ').toLowerCase();
-        const b=out.slice(i+n,i+2*n).join(' ').toLowerCase();
+        const a=out.slice(i,i+n).map(norm).join(' ');
+        const b=out.slice(i+n,i+2*n).map(norm).join(' ');
         if(a&&a===b){out.splice(i+n,n);changed=true;i--;}
       }
     }
@@ -1172,30 +1206,58 @@ document.getElementById('overlay').onclick=e=>{if(e.target.id==='overlay')closeS
 document.getElementById('lightbox').onclick=e=>{if(e.target.id==='lightbox')closeLightbox()};
 
 /* ---------- Backup / Import ---------- */
-function blobToB64(blob){return new Promise(res=>{const r=new FileReader();r.onload=()=>res(r.result);r.readAsDataURL(blob)})}
+function blobToB64(blob){return new Promise((res,rej)=>{
+  try{
+    const r=new FileReader();
+    r.onload=()=>res(r.result);
+    r.onerror=()=>rej(new Error('Falha ao ler mídia'));
+    r.onabort=()=>rej(new Error('Leitura de mídia cancelada'));
+    r.readAsDataURL(blob);
+  }catch(e){rej(e)}
+})}
 function b64ToBlob(dataUrl){const [head,b64]=dataUrl.split(',');const mime=head.match(/:(.*?);/)[1];const bin=atob(b64);const arr=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);return new Blob([arr],{type:mime})}
 
-async function buildBackupBlob(){
+async function buildBackupBlob(onProgress){
   const data=await allEntries();
   const out=[];
+  let idx=0;
   for(const e of data){
-    const o={id:e.id,date:e.date,scope:e.scope,theme:e.theme,title:e.title||'',text:e.text,transcript:e.transcript};
-    if(e.audio)o.audio=await blobToB64(e.audio);
-    if(e.media&&e.media.length){o.media=[];for(const m of e.media)o.media.push({type:m.type,data:await blobToB64(m.blob)})}
+    idx++;
+    if(onProgress)onProgress(idx,data.length);
+    const o={id:e.id,date:e.date,scope:e.scope,theme:e.theme,title:e.title||'',text:e.text||'',transcript:e.transcript||''};
+    try{
+      if(e.audio)o.audio=await blobToB64(e.audio);
+      if(e.media&&e.media.length){o.media=[];for(const m of e.media){if(m.blob)o.media.push({type:m.type,data:await blobToB64(m.blob)})}}
+    }catch(err){
+      // se uma mídia falhar, mantém o registro (texto) e segue, em vez de quebrar o backup todo
+      console.warn('Mídia ignorada no backup:',err);
+    }
     out.push(o);
   }
   const info=await allInfo();
   const backup={app:'diario-filha',version:1,exportedAt:new Date().toISOString(),name:babyName,birth,palette:currentPalette,entries:out,info};
-  return new Blob([JSON.stringify(backup)],{type:'application/json'});
+  const json=JSON.stringify(backup);
+  // validação: o JSON precisa ser parseável e conter a estrutura esperada
+  let ok=false;
+  try{const test=JSON.parse(json);ok=(test&&test.app==='diario-filha'&&Array.isArray(test.entries))}catch(e){ok=false}
+  if(!ok)throw new Error('Backup gerado ficou inválido');
+  return {blob:new Blob([json],{type:'application/json'}), count:out.length, infoCount:info.length};
 }
 function backupFilename(){return `backup-diario-${new Date().toISOString().slice(0,10)}.json`}
 
 async function exportData(){
-  toast('Preparando backup...');
-  const blob=await buildBackupBlob();
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download=backupFilename();a.click();
-  toast('Backup salvo 💾');
+  try{
+    toast('Preparando backup...');
+    const {blob,count,infoCount}=await buildBackupBlob((i,n)=>{
+      if(n>3)toast(`Processando ${i} de ${n}...`);
+    });
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download=backupFilename();a.click();
+    toast(`Backup salvo: ${count} registro${count!==1?'s':''} 💾`);
+  }catch(err){
+    toast('Erro ao gerar backup. Tente novamente.');
+    console.error(err);
+  }
 }
 function doBackup(){ if(driveHandle){saveToDrive()} else {exportData()} }
 function toggleSettings(){
@@ -1267,7 +1329,7 @@ async function saveToDrive(silent){
   if(!driveHandle){if(!silent)toast('Conecte uma pasta primeiro');return false}
   try{
     if(!await ensurePermission(driveHandle)){if(!silent)toast('Permissão da pasta negada');return false}
-    const blob=await buildBackupBlob();
+    const {blob}=await buildBackupBlob();
     const fileHandle=await driveHandle.getFileHandle(backupFilename(),{create:true});
     const w=await fileHandle.createWritable();
     await w.write(blob);await w.close();
@@ -1279,20 +1341,29 @@ async function saveToDrive(silent){
 
 document.getElementById('importFile').onchange=async e=>{
   const file=e.target.files[0];if(!file)return;
-  if(!confirm('Importar este backup? Os registros serão somados aos atuais.')){e.target.value='';return}
   try{
-    const backup=JSON.parse(await file.text());
+    const raw=await file.text();
+    if(!raw||!raw.trim()){toast('O arquivo está vazio');e.target.value='';return}
+    let backup;
+    try{backup=JSON.parse(raw)}catch(parseErr){toast('Arquivo não é um backup válido (.json)');e.target.value='';return}
+    if(!backup||backup.app!=='diario-filha'||!Array.isArray(backup.entries)){
+      toast('Este arquivo não é um backup do diário');e.target.value='';return;
+    }
+    if(!confirm(`Importar ${backup.entries.length} registro(s)? Eles serão somados aos atuais.`)){e.target.value='';return}
     if(backup.name){babyName=backup.name;await putMeta('name',babyName)}
     if(backup.birth){birth=backup.birth;await putMeta('birth',birth)}
+    let imported=0;
     for(const o of backup.entries){
-      const entry={id:o.id||Date.now()+Math.random(),date:o.date,scope:o.scope,theme:o.theme,title:o.title||'',text:o.text||'',transcript:o.transcript||'',audio:o.audio?b64ToBlob(o.audio):null,media:(o.media||[]).map(m=>({type:m.type,blob:b64ToBlob(m.data)}))};
-      await putEntry(entry);
+      try{
+        const entry={id:o.id||Date.now()+Math.random(),date:o.date,scope:o.scope,theme:o.theme,title:o.title||'',text:o.text||'',transcript:o.transcript||'',audio:o.audio?b64ToBlob(o.audio):null,media:(o.media||[]).map(m=>({type:m.type,blob:b64ToBlob(m.data)}))};
+        await putEntry(entry);imported++;
+      }catch(entryErr){console.warn('Registro ignorado:',entryErr)}
     }
-    if(backup.info){for(const it of backup.info){await putInfo(it)}}
+    if(backup.info){for(const it of backup.info){try{await putInfo(it)}catch(_){}}}
     if(backup.palette){currentPalette=backup.palette;await putMeta('palette',currentPalette);applyPalette(currentPalette)}
     document.getElementById('babyName').textContent=babyName;
-    render();toast('Backup importado 🎉');
-  }catch(err){toast('Arquivo inválido')}
+    render();toast(`${imported} registro(s) importado(s) 🎉`);
+  }catch(err){toast('Não foi possível importar o arquivo');console.error(err)}
   e.target.value='';
 };
 
@@ -1411,6 +1482,7 @@ document.getElementById('infoOverlay').onclick=e=>{if(e.target.id==='infoOverlay
   currentPalette=await getMeta('palette')||'rosa';
   applyPalette(currentPalette);
   document.getElementById('babyName').textContent=babyName;
+  setupAudioButtons();
   render();
   await refreshDriveUI();
   // backup diário semi-automático: se já tem pasta e ainda não salvou hoje, oferece
