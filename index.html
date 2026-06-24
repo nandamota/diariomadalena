@@ -1295,20 +1295,12 @@ function doBackup(){
   openBackupChooser();
 }
 async function openBackupChooser(){
-  // detecta se ESTE navegador realmente compartilha ARQUIVOS (não só texto)
-  let canShareFiles=false;
-  try{
-    const probe=new File([new Blob(['x'],{type:'text/plain'})],'x.txt',{type:'text/plain'});
-    canShareFiles = !!(navigator.canShare && navigator.canShare({files:[probe]}) && navigator.share);
-  }catch(e){canShareFiles=false}
+  const hasShare = !!navigator.share; // se existe compartilhamento, oferecemos
   const canFolder = ('showDirectoryPicker' in window);
   let html=`<div class="bc-title">Como salvar o backup?</div>`;
-  if(canShareFiles)html+=`<button class="bc-opt bc-primary" onclick="backupVia('share')">📤 Salvar no Google Drive<span>Abre o menu do celular — escolha o Google Drive (ou WhatsApp, e-mail...).</span></button>`;
+  if(hasShare)html+=`<button class="bc-opt bc-primary" onclick="backupVia('share')">📤 Salvar no Google Drive<span>Abre o menu do celular — escolha o Google Drive (ou WhatsApp, e-mail...).</span></button>`;
   if(canFolder)html+=`<button class="bc-opt" onclick="backupVia('folder')">📁 Salvar numa pasta<span>Escolha uma pasta (inclui Google Drive no computador).</span></button>`;
   html+=`<button class="bc-opt" onclick="backupVia('download')">⬇️ Baixar arquivo<span>Salva em Downloads. No celular, o Drive não aparece aqui.</span></button>`;
-  if(!canShareFiles&&!canFolder){
-    html+=`<div class="bc-hint">Para guardar no Drive: baixe o arquivo e depois envie-o pelo app do Google Drive (botão + → Enviar).</div>`;
-  }
   html+=`<button class="bc-cancel" onclick="closeBackupChooser()">Cancelar</button>`;
   let ov=document.getElementById('backupChooser');
   if(!ov){
@@ -1341,23 +1333,29 @@ async function shareBackup(){
     toast('Preparando backup...');
     const {blob,count}=await buildBackupBlob((i,n)=>{if(n>3)toast(`Processando ${i} de ${n}...`)});
     const fname=backupFilename();
-    // tenta com o tipo correto e, se não aceitar, com text/plain (mais aceito no Android)
-    let file=new File([blob],fname,{type:'application/json'});
-    let canShareFile = navigator.canShare && navigator.canShare({files:[file]});
-    if(!canShareFile){
-      file=new File([blob],fname,{type:'text/plain'});
-      canShareFile = navigator.canShare && navigator.canShare({files:[file]});
-    }
-    if(canShareFile){
+    const file=new File([blob],fname,{type:'application/json'});
+    // tenta compartilhar o arquivo diretamente (abre o menu de apps com o Drive).
+    // Não pré-bloqueia: se o navegador recusar, tratamos no catch.
+    try{
       await navigator.share({files:[file],title:'Backup do Diário'});
       toast(`Backup enviado: ${count} registro${count!==1?'s':''} 💾`);
-    }else{
-      // este navegador não compartilha arquivos: avisa e oferece o download
-      toast('Seu navegador não compartilha arquivos. Baixando para você enviar ao Drive manualmente.');
-      exportData();
+      return;
+    }catch(shareErr){
+      if(shareErr&&shareErr.name==='AbortError')return; // usuário fechou o menu
+      // alguns navegadores recusam application/json: tenta como text/plain
+      try{
+        const file2=new File([blob],fname,{type:'text/plain'});
+        await navigator.share({files:[file2],title:'Backup do Diário'});
+        toast(`Backup enviado: ${count} registro${count!==1?'s':''} 💾`);
+        return;
+      }catch(shareErr2){
+        if(shareErr2&&shareErr2.name==='AbortError')return;
+        // não deu para compartilhar arquivo: faz o download como alternativa
+        toast('Não foi possível abrir o Drive. Baixando o arquivo...');
+        exportData();
+      }
     }
   }catch(err){
-    if(err&&err.name==='AbortError')return; // usuário cancelou o menu de compartilhar
     console.error(err);exportData();
   }
 }
