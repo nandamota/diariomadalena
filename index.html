@@ -1216,149 +1216,32 @@ document.getElementById('overlay').onclick=e=>{if(e.target.id==='overlay')closeS
 document.getElementById('lightbox').onclick=e=>{if(e.target.id==='lightbox')closeLightbox()};
 
 /* ---------- Backup / Import ---------- */
-function blobToB64(blob){return new Promise((res,rej)=>{
-  try{
-    const r=new FileReader();
-    r.onload=()=>res(r.result);
-    r.onerror=()=>rej(new Error('Falha ao ler mídia'));
-    r.onabort=()=>rej(new Error('Leitura de mídia cancelada'));
-    r.readAsDataURL(blob);
-  }catch(e){rej(e)}
-})}
+function blobToB64(blob){return new Promise(res=>{const r=new FileReader();r.onload=()=>res(r.result);r.readAsDataURL(blob)})}
 function b64ToBlob(dataUrl){const [head,b64]=dataUrl.split(',');const mime=head.match(/:(.*?);/)[1];const bin=atob(b64);const arr=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);return new Blob([arr],{type:mime})}
 
-async function buildBackupBlob(onProgress){
+async function buildBackupBlob(){
   const data=await allEntries();
   const out=[];
-  let idx=0;
   for(const e of data){
-    idx++;
-    if(onProgress)onProgress(idx,data.length);
-    const o={id:e.id,date:e.date,scope:e.scope,theme:e.theme,title:e.title||'',text:e.text||'',transcript:e.transcript||''};
-    try{
-      if(e.audio)o.audio=await blobToB64(e.audio);
-      if(e.media&&e.media.length){o.media=[];for(const m of e.media){if(m.blob)o.media.push({type:m.type,data:await blobToB64(m.blob)})}}
-    }catch(err){
-      // se uma mídia falhar, mantém o registro (texto) e segue, em vez de quebrar o backup todo
-      console.warn('Mídia ignorada no backup:',err);
-    }
+    const o={id:e.id,date:e.date,scope:e.scope,theme:e.theme,title:e.title||'',text:e.text,transcript:e.transcript};
+    if(e.audio)o.audio=await blobToB64(e.audio);
+    if(e.media&&e.media.length){o.media=[];for(const m of e.media)o.media.push({type:m.type,data:await blobToB64(m.blob)})}
     out.push(o);
   }
   const info=await allInfo();
   const backup={app:'diario-filha',version:1,exportedAt:new Date().toISOString(),name:babyName,birth,palette:currentPalette,entries:out,info};
-  const json=JSON.stringify(backup);
-  // validação leve: precisa ter conteúdo e a marca do app (sem reparse do arquivo inteiro,
-  // que poderia falhar por memória quando há muitas fotos/vídeos)
-  const ok = json && json.length>30 && json.indexOf('"app":"diario-filha"')!==-1 && json.indexOf('"entries":')!==-1;
-  if(!ok)throw new Error('Backup gerado ficou inválido');
-  return {blob:new Blob([json],{type:'application/json'}), count:out.length, infoCount:info.length};
+  return new Blob([JSON.stringify(backup)],{type:'application/json'});
 }
 function backupFilename(){return `backup-diario-${new Date().toISOString().slice(0,10)}.json`}
 
 async function exportData(){
-  try{
-    toast('Preparando backup...');
-    const {blob,count}=await buildBackupBlob((i,n)=>{
-      if(n>3)toast(`Processando ${i} de ${n}...`);
-    });
-    const url=URL.createObjectURL(blob);
-    const fname=backupFilename();
-    // tenta o download normal
-    const a=document.createElement('a');
-    a.href=url;a.download=fname;a.rel='noopener';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    toast(`Backup pronto: ${count} registro${count!==1?'s':''} 💾`);
-    // fallback p/ navegadores móveis que bloqueiam download após processamento:
-    // mostra um link manual para salvar
-    showBackupFallback(url,fname);
-    setTimeout(()=>URL.revokeObjectURL(url),120000);
-  }catch(err){
-    toast('Erro ao gerar backup. Tente novamente.');
-    console.error(err);
-  }
+  toast('Preparando backup...');
+  const blob=await buildBackupBlob();
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=backupFilename();a.click();
+  toast('Backup salvo 💾');
 }
-function showBackupFallback(url,fname){
-  let box=document.getElementById('backupFallback');
-  if(!box){
-    box=document.createElement('div');box.id='backupFallback';
-    box.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow-lg);z-index:200;max-width:90%;text-align:center;font-size:13.5px';
-    document.body.appendChild(box);
-  }
-  box.innerHTML=`<div style="margin-bottom:8px">Se o download não começou, toque abaixo para salvar:</div>
-    <a href="${url}" download="${fname}" style="display:inline-block;background:var(--rose-deep);color:#fff;padding:9px 18px;border-radius:999px;font-weight:700;text-decoration:none">⬇️ Baixar backup</a>
-    <button onclick="document.getElementById('backupFallback').remove()" style="display:block;margin:10px auto 0;background:none;border:none;color:var(--ink-soft);font-size:12px;cursor:pointer">fechar</button>`;
-  setTimeout(()=>{const b=document.getElementById('backupFallback');if(b)b.remove()},30000);
-}
-function doBackup(){
-  openBackupChooser();
-}
-async function openBackupChooser(){
-  const hasShare = !!navigator.share; // se existe compartilhamento, oferecemos
-  const canFolder = ('showDirectoryPicker' in window);
-  let html=`<div class="bc-title">Como salvar o backup?</div>`;
-  if(hasShare)html+=`<button class="bc-opt bc-primary" onclick="backupVia('share')">📤 Salvar no Google Drive<span>Abre o menu do celular — escolha o Google Drive (ou WhatsApp, e-mail...).</span></button>`;
-  if(canFolder)html+=`<button class="bc-opt" onclick="backupVia('folder')">📁 Salvar numa pasta<span>Escolha uma pasta (inclui Google Drive no computador).</span></button>`;
-  html+=`<button class="bc-opt" onclick="backupVia('download')">⬇️ Baixar arquivo<span>Salva em Downloads. No celular, o Drive não aparece aqui.</span></button>`;
-  html+=`<button class="bc-cancel" onclick="closeBackupChooser()">Cancelar</button>`;
-  let ov=document.getElementById('backupChooser');
-  if(!ov){
-    ov=document.createElement('div');ov.id='backupChooser';ov.className='overlay';
-    ov.onclick=e=>{if(e.target.id==='backupChooser')closeBackupChooser()};
-    document.body.appendChild(ov);
-  }
-  ov.innerHTML=`<div class="sheet bc-sheet"><div class="grab"></div>${html}</div>`;
-  ov.classList.add('show');
-}
-function closeBackupChooser(){const ov=document.getElementById('backupChooser');if(ov)ov.classList.remove('show')}
-
-async function backupVia(method){
-  closeBackupChooser();
-  if(method==='folder'){ if(driveHandle){saveToDrive()} else { connectThenSave() } return; }
-  if(method==='share'){ shareBackup(); return; }
-  exportData(); // download
-}
-async function connectThenSave(){
-  // conecta uma pasta na hora e salva
-  if(!('showDirectoryPicker' in window)){exportData();return}
-  try{
-    const handle=await window.showDirectoryPicker({mode:'readwrite'});
-    driveHandle=handle;await putMeta('driveHandle',handle);refreshDriveUI();
-    saveToDrive();
-  }catch(e){/* cancelou */}
-}
-async function shareBackup(){
-  try{
-    toast('Preparando backup...');
-    const {blob,count}=await buildBackupBlob((i,n)=>{if(n>3)toast(`Processando ${i} de ${n}...`)});
-    const fname=backupFilename();
-    const file=new File([blob],fname,{type:'application/json'});
-    // tenta compartilhar o arquivo diretamente (abre o menu de apps com o Drive).
-    // Não pré-bloqueia: se o navegador recusar, tratamos no catch.
-    try{
-      await navigator.share({files:[file],title:'Backup do Diário'});
-      toast(`Backup enviado: ${count} registro${count!==1?'s':''} 💾`);
-      return;
-    }catch(shareErr){
-      if(shareErr&&shareErr.name==='AbortError')return; // usuário fechou o menu
-      // alguns navegadores recusam application/json: tenta como text/plain
-      try{
-        const file2=new File([blob],fname,{type:'text/plain'});
-        await navigator.share({files:[file2],title:'Backup do Diário'});
-        toast(`Backup enviado: ${count} registro${count!==1?'s':''} 💾`);
-        return;
-      }catch(shareErr2){
-        if(shareErr2&&shareErr2.name==='AbortError')return;
-        // não deu para compartilhar arquivo: faz o download como alternativa
-        toast('Não foi possível abrir o Drive. Baixando o arquivo...');
-        exportData();
-      }
-    }
-  }catch(err){
-    console.error(err);exportData();
-  }
-}
+function doBackup(){ if(driveHandle){saveToDrive()} else {exportData()} }
 function toggleSettings(){
   const p=document.getElementById('settingsPanel');
   p.classList.toggle('show');
