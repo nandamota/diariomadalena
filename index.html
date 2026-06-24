@@ -208,6 +208,12 @@
   .stat .n{font-family:'Fraunces';font-size:26px;font-weight:600;color:var(--rose-deep)}
   .stat .l{font-size:11.5px;color:var(--ink-soft);margin-top:2px}
   .toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 20px;border-radius:999px;font-size:13.5px;z-index:100;opacity:0;transition:.3s;pointer-events:none}
+  .bc-sheet{padding-bottom:24px}
+  .bc-title{font-family:'Fraunces';font-size:20px;font-weight:600;text-align:center;margin-bottom:16px}
+  .bc-opt{display:block;width:100%;text-align:left;background:var(--bg-card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;font-size:15px;font-weight:700;color:var(--ink);font-family:'Nunito Sans';cursor:pointer}
+  .bc-opt span{display:block;font-size:12px;font-weight:400;color:var(--ink-soft);margin-top:3px}
+  .bc-opt:active{background:var(--cream)}
+  .bc-cancel{display:block;width:100%;background:var(--cream);border:none;border-radius:14px;padding:13px;font-size:14px;font-weight:700;color:var(--ink);font-family:'Nunito Sans';cursor:pointer;margin-top:4px}
   .toast.show{opacity:1}
 
   /* resumo */
@@ -1281,7 +1287,61 @@ function showBackupFallback(url,fname){
     <button onclick="document.getElementById('backupFallback').remove()" style="display:block;margin:10px auto 0;background:none;border:none;color:var(--ink-soft);font-size:12px;cursor:pointer">fechar</button>`;
   setTimeout(()=>{const b=document.getElementById('backupFallback');if(b)b.remove()},30000);
 }
-function doBackup(){ if(driveHandle){saveToDrive()} else {exportData()} }
+function doBackup(){
+  openBackupChooser();
+}
+async function openBackupChooser(){
+  // monta as opções disponíveis neste aparelho/navegador
+  const canShare = !!(navigator.canShare && navigator.share);
+  const canFolder = ('showDirectoryPicker' in window);
+  let html=`<div class="bc-title">Como salvar o backup?</div>`;
+  if(canShare)html+=`<button class="bc-opt" onclick="backupVia('share')">📤 Enviar / salvar no Drive<span>Abre o menu do celular para escolher o Google Drive, WhatsApp, etc.</span></button>`;
+  if(canFolder)html+=`<button class="bc-opt" onclick="backupVia('folder')">📁 Salvar numa pasta<span>Escolha uma pasta (inclui Google Drive no computador).</span></button>`;
+  html+=`<button class="bc-opt" onclick="backupVia('download')">⬇️ Baixar arquivo<span>Salva na pasta de Downloads do aparelho.</span></button>`;
+  html+=`<button class="bc-cancel" onclick="closeBackupChooser()">Cancelar</button>`;
+  let ov=document.getElementById('backupChooser');
+  if(!ov){
+    ov=document.createElement('div');ov.id='backupChooser';ov.className='overlay';
+    ov.onclick=e=>{if(e.target.id==='backupChooser')closeBackupChooser()};
+    document.body.appendChild(ov);
+  }
+  ov.innerHTML=`<div class="sheet bc-sheet"><div class="grab"></div>${html}</div>`;
+  ov.classList.add('show');
+}
+function closeBackupChooser(){const ov=document.getElementById('backupChooser');if(ov)ov.classList.remove('show')}
+
+async function backupVia(method){
+  closeBackupChooser();
+  if(method==='folder'){ if(driveHandle){saveToDrive()} else { connectThenSave() } return; }
+  if(method==='share'){ shareBackup(); return; }
+  exportData(); // download
+}
+async function connectThenSave(){
+  // conecta uma pasta na hora e salva
+  if(!('showDirectoryPicker' in window)){exportData();return}
+  try{
+    const handle=await window.showDirectoryPicker({mode:'readwrite'});
+    driveHandle=handle;await putMeta('driveHandle',handle);refreshDriveUI();
+    saveToDrive();
+  }catch(e){/* cancelou */}
+}
+async function shareBackup(){
+  try{
+    toast('Preparando backup...');
+    const {blob,count}=await buildBackupBlob((i,n)=>{if(n>3)toast(`Processando ${i} de ${n}...`)});
+    const file=new File([blob],backupFilename(),{type:'application/json'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      await navigator.share({files:[file],title:'Backup do Diário',text:'Backup do diário da minha filha'});
+      toast(`Backup pronto: ${count} registro${count!==1?'s':''} 💾`);
+    }else{
+      // se não puder compartilhar arquivo, cai pro download
+      exportData();
+    }
+  }catch(err){
+    if(err&&err.name==='AbortError')return; // usuário cancelou o menu de compartilhar
+    console.error(err);exportData();
+  }
+}
 function toggleSettings(){
   const p=document.getElementById('settingsPanel');
   p.classList.toggle('show');
@@ -1358,7 +1418,14 @@ async function saveToDrive(silent){
     if(!silent)toast('Backup salvo na pasta 💾');
     await putMeta('lastDriveBackup',new Date().toISOString().slice(0,10));
     return true;
-  }catch(err){if(!silent)toast('Não foi possível salvar na pasta');return false}
+  }catch(err){
+    console.error('Falha ao salvar na pasta:',err);
+    if(!silent){
+      toast('Pasta indisponível — baixando o backup...');
+      exportData(); // fallback: download normal
+    }
+    return false;
+  }
 }
 
 document.getElementById('importFile').onchange=async e=>{
@@ -1507,8 +1574,8 @@ document.getElementById('infoOverlay').onclick=e=>{if(e.target.id==='infoOverlay
   setupAudioButtons();
   render();
   await refreshDriveUI();
-  // backup diário semi-automático: se já tem pasta e ainda não salvou hoje, oferece
-  if(driveHandle){
+  // backup diário semi-automático: só no PC com pasta conectada e recurso disponível
+  if(driveHandle && ('showDirectoryPicker' in window) && !IS_MOBILE){
     const last=await getMeta('lastDriveBackup');
     const today=new Date().toISOString().slice(0,10);
     const hasEntries=(await allEntries()).length>0;
