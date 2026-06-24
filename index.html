@@ -1237,9 +1237,9 @@ async function buildBackupBlob(onProgress){
   const info=await allInfo();
   const backup={app:'diario-filha',version:1,exportedAt:new Date().toISOString(),name:babyName,birth,palette:currentPalette,entries:out,info};
   const json=JSON.stringify(backup);
-  // validação: o JSON precisa ser parseável e conter a estrutura esperada
-  let ok=false;
-  try{const test=JSON.parse(json);ok=(test&&test.app==='diario-filha'&&Array.isArray(test.entries))}catch(e){ok=false}
+  // validação leve: precisa ter conteúdo e a marca do app (sem reparse do arquivo inteiro,
+  // que poderia falhar por memória quando há muitas fotos/vídeos)
+  const ok = json && json.length>30 && json.indexOf('"app":"diario-filha"')!==-1 && json.indexOf('"entries":')!==-1;
   if(!ok)throw new Error('Backup gerado ficou inválido');
   return {blob:new Blob([json],{type:'application/json'}), count:out.length, infoCount:info.length};
 }
@@ -1248,16 +1248,38 @@ function backupFilename(){return `backup-diario-${new Date().toISOString().slice
 async function exportData(){
   try{
     toast('Preparando backup...');
-    const {blob,count,infoCount}=await buildBackupBlob((i,n)=>{
+    const {blob,count}=await buildBackupBlob((i,n)=>{
       if(n>3)toast(`Processando ${i} de ${n}...`);
     });
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-    a.download=backupFilename();a.click();
-    toast(`Backup salvo: ${count} registro${count!==1?'s':''} 💾`);
+    const url=URL.createObjectURL(blob);
+    const fname=backupFilename();
+    // tenta o download normal
+    const a=document.createElement('a');
+    a.href=url;a.download=fname;a.rel='noopener';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    toast(`Backup pronto: ${count} registro${count!==1?'s':''} 💾`);
+    // fallback p/ navegadores móveis que bloqueiam download após processamento:
+    // mostra um link manual para salvar
+    showBackupFallback(url,fname);
+    setTimeout(()=>URL.revokeObjectURL(url),120000);
   }catch(err){
     toast('Erro ao gerar backup. Tente novamente.');
     console.error(err);
   }
+}
+function showBackupFallback(url,fname){
+  let box=document.getElementById('backupFallback');
+  if(!box){
+    box=document.createElement('div');box.id='backupFallback';
+    box.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow-lg);z-index:200;max-width:90%;text-align:center;font-size:13.5px';
+    document.body.appendChild(box);
+  }
+  box.innerHTML=`<div style="margin-bottom:8px">Se o download não começou, toque abaixo para salvar:</div>
+    <a href="${url}" download="${fname}" style="display:inline-block;background:var(--rose-deep);color:#fff;padding:9px 18px;border-radius:999px;font-weight:700;text-decoration:none">⬇️ Baixar backup</a>
+    <button onclick="document.getElementById('backupFallback').remove()" style="display:block;margin:10px auto 0;background:none;border:none;color:var(--ink-soft);font-size:12px;cursor:pointer">fechar</button>`;
+  setTimeout(()=>{const b=document.getElementById('backupFallback');if(b)b.remove()},30000);
 }
 function doBackup(){ if(driveHandle){saveToDrive()} else {exportData()} }
 function toggleSettings(){
