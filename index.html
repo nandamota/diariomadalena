@@ -1232,7 +1232,12 @@ async function buildBackupBlob(){
   const backup={app:'diario-filha',version:1,exportedAt:new Date().toISOString(),name:babyName,birth,palette:currentPalette,entries:out,info};
   return new Blob([JSON.stringify(backup)],{type:'application/json'});
 }
-function backupFilename(){return `backup-diario-${new Date().toISOString().slice(0,10)}.json`}
+function backupFilename(){
+  // inclui hora-minuto para o nome ser único e evitar o aviso de "arquivo já existe"
+  const d=new Date();
+  const pad=n=>String(n).padStart(2,'0');
+  return `backup-diario-${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}.json`;
+}
 
 async function exportData(){
   toast('Preparando backup...');
@@ -1241,7 +1246,39 @@ async function exportData(){
   a.download=backupFilename();a.click();
   toast('Backup salvo 💾');
 }
-function doBackup(){ if(driveHandle){saveToDrive()} else {exportData()} }
+
+// Compartilha o arquivo: no Android abre os apps (toque no Drive = salva direto, sem tela de download)
+async function shareBackup(){
+  const blob=await buildBackupBlob();
+  const fname=backupFilename();
+  const tryShare=async (type)=>{
+    const file=new File([blob],fname,{type});
+    await navigator.share({files:[file],title:'Backup do Diário'});
+  };
+  try{
+    await tryShare('application/json');
+    toast('Backup enviado 💾');
+  }catch(e1){
+    if(e1&&e1.name==='AbortError')return; // usuário fechou o menu
+    try{
+      await tryShare('text/plain');
+      toast('Backup enviado 💾');
+    }catch(e2){
+      if(e2&&e2.name==='AbortError')return;
+      // navegador não compartilha arquivos: cai no download
+      exportData();
+    }
+  }
+}
+
+function doBackup(){
+  // 1) pasta do Drive conectada (computador) -> salva direto
+  if(driveHandle){saveToDrive();return}
+  // 2) celular com compartilhamento -> abre apps; um toque no Drive salva lá
+  if(navigator.share){shareBackup();return}
+  // 3) sem nada disso -> download normal
+  exportData();
+}
 function toggleSettings(){
   const p=document.getElementById('settingsPanel');
   p.classList.toggle('show');
